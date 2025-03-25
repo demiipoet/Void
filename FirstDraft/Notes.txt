@@ -1,0 +1,42 @@
+In Progress:
+- Learn Github
+- Learning how to create and use logs
+-- Have ChatGPT show how to save logs to file
+--- I asked. Read response.
+
+Left Off:
+- 
+
+Next:
+- Github stuff
+- Fix stats so they can't go beyond 999
+- Fix MaxHP so it can't go beyond 9,999
+- Make max [Level] = 99
+- Return [Bat] stats to normal 
+- Return [Player] stats to normal 
+- Return [Player] ding stats to normal 
+- Have ChatGPT look over updated [Battl()] method
+
+Unit Tests To Do:
+- [Player.TakeDamage] does not go over [9999]
+- [Monster.TakeDamage] does not go over [9999]
+- [Player] chooses "Attack": Monster takes correct damage
+- [Player] chooses "Defend": Player receives [1] damage
+- [Player] [Attack] vs [Monster] [Defense]
+- [Player] [Defense] vs [Monster] [Attack]
+- [Level] doesn't go past 99 with ding
+- [MaxHP] doesn't go past 999 with ding
+- [Monster] [Stats] isntances initializes correctly
+- [BaseStats.Strength] doesn't go past 999 with ding
+- [BaseStats.Defense] doesn't go past 999 with ding
+
+Questions for ChatGPT:
+- How to save logs to a file
+- Is there a [Random] method that uses an inclusive range?
+-- Why use [Next(x, y)] instead of that?
+- Re [Player] [if (processedBattleChoice == "A")], should [int playerDamageDealt] be declared above the [if] statement?
+- Re [Monster] [if (processedBattleChoice == "D")], should [int reducedDamage] be declared above the [if] statement?
+- Should [ExpUp()] be a [do while] loop?
+- should [private int ExpThreshold => Level * 10;] have a [getter] and [setter]?
+- In general, should variable definitions (e.g., [int]) go outside of loops and their assignments inside the loops?
+
