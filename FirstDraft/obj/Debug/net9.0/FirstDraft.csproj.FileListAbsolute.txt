@@ -95,3 +95,4 @@
 /Users/dawn/Projects/Void/FirstDraft/obj/Debug/net9.0/FirstDraft.pdb
 /Users/dawn/Projects/Void/FirstDraft/obj/Debug/net9.0/FirstDraft.genruntimeconfig.cache
 /Users/dawn/Projects/Void/FirstDraft/obj/Debug/net9.0/ref/FirstDraft.dll
+/Users/dawn/Projects/Void/FirstDraft/obj/Debug/net9.0/FirstDraft.sourcelink.json

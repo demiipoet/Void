@@ -103,3 +103,4 @@
 /Users/dawn/Projects/Void/FirstDraft.Tests/obj/Debug/net9.0/FirstDraft.Tests.pdb
 /Users/dawn/Projects/Void/FirstDraft.Tests/obj/Debug/net9.0/FirstDraft.Tests.genruntimeconfig.cache
 /Users/dawn/Projects/Void/FirstDraft.Tests/obj/Debug/net9.0/ref/FirstDraft.Tests.dll
+/Users/dawn/Projects/Void/FirstDraft.Tests/obj/Debug/net9.0/FirstDraft.Tests.sourcelink.json

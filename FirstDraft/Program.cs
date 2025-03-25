@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Security;
+using System.IO;
 
 namespace FirstDraft
 {
@@ -227,6 +228,28 @@ namespace FirstDraft
     /* ~~~~~~~~~~~~ Game Manager (Handles Combat) ~~~~~~~~~~~~ */
     public static class Game
     {
+        // public static void SaveCombatLog(string fileName = "combat_log.txt", string folderName = "Logs")
+        public static void SaveCombatLog(string fileName, string folderName = "Logs")
+        {
+            try
+            {
+                Directory.CreateDirectory(folderName);
+                string fullPath = Path.Combine(folderName, fileName);
+                File.WriteAllLines(fullPath, combatLog);
+                Console.WriteLine($"\nCombat log saved to {Path.GetFullPath(fullPath)}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving log: {ex.Message}");
+            }
+        }
+
+        public static string GenerateLogFilename(string monsterName)
+        {
+            string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            return $"{monsterName.ToLower()}_battle_log_{timestamp}.txt";
+        }
+
         private static string GetPlayerChoice()
         {
             string? choice;
@@ -259,7 +282,6 @@ namespace FirstDraft
             {
                 Console.WriteLine(entry);
             }
-        //    Console.WriteLine("==================\n"); 
            Console.WriteLine("======== End Combat Log ========\n"); 
         }
 
@@ -348,11 +370,16 @@ namespace FirstDraft
             Console.WriteLine("\n~~~~~~~~");
             Game.ShowCombatLog();
 
-            // Console.WriteLine("\n~~~~~~~~");
+            string logName = Game.GenerateLogFilename(bat.Name ?? "");
+            Game.SaveCombatLog(logName);
 
-            // Game.Battle(player, wolf);
-            // Console.WriteLine("\n~~~~~~~~");
-            // Game.ShowCombatLog();
+            /*
+            Console.WriteLine("\n~~~~~~~~");
+
+            Game.Battle(player, wolf);
+            Console.WriteLine("\n~~~~~~~~");
+            Game.ShowCombatLog();
+            */
             
         }
     }

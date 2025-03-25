@@ -5,7 +5,7 @@ In Progress:
 --- I asked. Read response.
 
 Left Off:
-- 
+- Learning how to add timestamps and such to logs
 
 Next:
 - Github stuff
