@@ -1,2 +1,25 @@
-# Personal notes
-FirstDraft/Notes.txt
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Build artifacts
+bin/
+obj/
+build/
+
+# Logs & temporary files
+*.log
+*.tmp
+*.bak
+
+# User-specific files (mostly Windows-based, safe to include)
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Personal dev files
+dev_notes/
+
