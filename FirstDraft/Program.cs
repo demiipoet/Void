@@ -30,7 +30,6 @@ namespace FirstDraft
         public int CurrentHP { get; private set; } = maxHP;
         public Stats BaseStats { get; private set; } = baseStats;
         public int Experience { get; private set; } = 0;
-        /* Deleted [ExpThreshold => Level * 10;] */
         private int ExpThreshold => Level * 10;
 
         public string ExpUp(int exp)
@@ -67,24 +66,21 @@ namespace FirstDraft
             }
 
             int prevMaxHP = MaxHP;
-            // MaxHP += 50;
-            MaxHP += 999;
+            MaxHP += 50;
             if (MaxHP > 999)
             {
                 MaxHP = 999;
             }
 
             int prevStrength = BaseStats.Strength;
-            // BaseStats.Strength += 10;
-            BaseStats.Strength += 999;
+            BaseStats.Strength += 10;
             if (BaseStats.Strength> 999)
             {
                 BaseStats.Strength = 999;
             }
 
             int prevDefense = BaseStats.Defense;
-            // BaseStats.Defense += 10;
-            BaseStats.Defense += 999;
+            BaseStats.Defense += 10;
             if (BaseStats.Defense > 999)
             {
                 BaseStats.Defense = 999;
@@ -96,12 +92,6 @@ namespace FirstDraft
             $"Previous Max HP: {prevMaxHP}, New Max HP: {MaxHP}\n" + 
             $"Previous Strength: {prevStrength}, New Strength: {BaseStats.Strength}\n" +
             $"Previous Defense: {prevDefense}, New Defense: {BaseStats.Defense}\n\n";
-
-            // Console.WriteLine($"{Name} leveled up!");
-            // Console.WriteLine($"Previous Level: {prevLevel}, New Level: {Level}");
-            // Console.WriteLine($"Previous Max HP: {prevMaxHP}, New Max HP: {MaxHP}");
-            // Console.WriteLine($"Previous Strength: {prevStrength}, New Strength: {BaseStats.Strength}");
-            // Console.WriteLine($"Previous Defense: {prevDefense}, New Defense: {BaseStats.Defense}");
         }
         
         public string TakeDamage(double damage, Monster monster)
@@ -118,7 +108,7 @@ namespace FirstDraft
             /* Do we need this in addition to the above? */
             // finalDamage = Math.Max(finalDamage, 1);
 
-            if (finalDamage >= 9999)
+            if (finalDamage > 9999)
             {
                 finalDamage = 9999;
             }
@@ -218,8 +208,7 @@ namespace FirstDraft
         public static Monster CreateMonster(int monsterID) =>
         monsterID switch
         {
-            // 1 => new("Bat", 150, 5, new Stats(5, 6)),
-            1 => new("Bat", 150, 5, new Stats(999999, 6)),
+            1 => new("Bat", 150, 5, new Stats(5, 6)),
             2 => new("Wolf", 150, 7, new Stats(6, 7)),
             _ => throw new ArgumentException("Invalid MonsterID")
         };
@@ -258,7 +247,7 @@ namespace FirstDraft
                 Console.WriteLine("Attack (A), Defend (D), or Heal (H)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
-                if (choice != "A" && choice != "D" & choice != "H")
+                if (choice != "A" && choice != "D" && choice != "H")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
@@ -360,7 +349,6 @@ namespace FirstDraft
         {
             Console.WriteLine("\nWelcome to Void.");
 
-            // Stats playerStats = new(29, 52);
             Stats playerStats = new(29, 52);
             Player player = new("Zaza", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
