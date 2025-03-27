@@ -57,7 +57,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_ExpUpCausesMultipleLevelUps_CorrectHP()
+        public void Player_ExpUpCausesMultipleLevelUps_SameCurrentHP()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -69,8 +69,8 @@ namespace FirstDraft.Tests
             
             // Assert
             Assert.Equal(4, player.Level);
-            Assert.Equal(250, player.MaxHP);
-            Assert.Equal(100, player.CurrentHP);
+            Assert.Equal(450, player.MaxHP);
+            Assert.Equal(300, player.CurrentHP);
         }
 
         [Fact]
@@ -210,7 +210,7 @@ namespace FirstDraft.Tests
 
             // Act
             // Take more damage than HP
-            player.TakeDamage(150, bat);
+            player.TakeDamage(999, bat);
 
             // Asssert
             // HP should be 0, not negative
@@ -218,7 +218,7 @@ namespace FirstDraft.Tests
         }
         
         [Fact]
-        public void Player_TakeNegativeDamage_DoesNotChangeHP()
+        public void Player_TakingNegativeDamage_DoesNotChangeHP()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -246,7 +246,7 @@ namespace FirstDraft.Tests
             player.TakeDamage(10, bat);
             
             // Assert
-            Assert.Equal(91, player.CurrentHP);
+            Assert.Equal(291, player.CurrentHP);
         }
 
         /* ~~~~~~~~~~~ HP ~~~~~~~~~~~ */
@@ -259,8 +259,8 @@ namespace FirstDraft.Tests
 
             // Assert
             Assert.Equal(player.CurrentHP, player.MaxHP);
-            Assert.Equal(100, player.CurrentHP);
-            Assert.Equal(100, player.MaxHP);
+            Assert.Equal(300, player.CurrentHP);
+            Assert.Equal(300, player.MaxHP);
         }
 
         [Fact]
@@ -298,8 +298,8 @@ namespace FirstDraft.Tests
 
             // Assert
             Assert.Equal(2, player.Level);
-            Assert.Equal(150, player.MaxHP);
-            Assert.Equal(59, player.CurrentHP); // [100] - [41]
+            Assert.Equal(350, player.MaxHP);
+            Assert.Equal(259, player.CurrentHP); // [300] - [41]
 
         }
 

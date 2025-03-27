@@ -15,9 +15,9 @@ namespace FirstDraft.Tests
             Monster wolf = MonsterFactory.CreateMonster(2);
             
             // Assert
-            Assert.Equal("Wolf", wolf.Name);
-            Assert.Equal(30, wolf.MaxHP);
-            Assert.Equal(30, wolf.CurrentHP);
+            Assert.Equal("[Monster] Wolf", wolf.Name);
+            Assert.Equal(150, wolf.MaxHP);
+            Assert.Equal(150, wolf.CurrentHP);
             Assert.Equal(7, wolf.ExpGiven);
         }
         
@@ -54,7 +54,7 @@ namespace FirstDraft.Tests
 
             // Assert
             // Expected: 20 - 5 = 15
-            Assert.Equal(15, bat.CurrentHP);
+            Assert.Equal(144, bat.CurrentHP);
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace FirstDraft.Tests
         {
             // Arrange
             // HP: 20
-            Monster bat = MonsterFactory.CreateMonster(2);
+            Monster bat = MonsterFactory.CreateMonster(1);
             Stats playerStats = new(29, 52);
             Player player = new ("Zaza", playerStats);
 
@@ -71,11 +71,11 @@ namespace FirstDraft.Tests
             bat.HealHP(5);
 
             // Assert
-            Assert.Equal(25, bat.CurrentHP);
+            Assert.Equal(144, bat.CurrentHP);
         }
 
         [Fact]
-        public void Monster_DoesNotTakeNegativeDamage()
+        public void Monster_TakingNegativeDamage_DoesNotChangeHP()
         {
             // Arrange
             Monster bat = MonsterFactory.CreateMonster(1); 
@@ -88,11 +88,11 @@ namespace FirstDraft.Tests
 
             // Assert
             // HP should remain unchanged
-            Assert.Equal(20, bat.CurrentHP);
+            Assert.Equal(150, bat.CurrentHP);
         }
 
         [Fact]
-        public void Monster_Dies_WhenHPReachesZero()
+        public void Monster_Dies_WhenHPReachesZeroExactly()
         {
             // Arrange
             // Starts with 20 HP
@@ -102,7 +102,7 @@ namespace FirstDraft.Tests
 
             // Act
             // More than current HP
-            bat.TakeDamage(30, player);
+            bat.TakeDamage(153, player);
 
             // Assert
             // Should not go negative
@@ -121,8 +121,8 @@ namespace FirstDraft.Tests
             // Assert
             // Starts with full HP
             Assert.Equal(bat.CurrentHP, bat.MaxHP);
-            Assert.Equal(20, bat.CurrentHP);
-            Assert.Equal(20, bat.MaxHP);
+            Assert.Equal(150, bat.CurrentHP);
+            Assert.Equal(150, bat.MaxHP);
         }
 
         [Fact]
@@ -152,7 +152,7 @@ namespace FirstDraft.Tests
            wolf.TakeDamage(-999, player);
            
            // Assert
-           Assert.Equal(30, wolf.CurrentHP);
+           Assert.Equal(150, wolf.CurrentHP);
        } 
 
       [Fact]
@@ -194,13 +194,13 @@ namespace FirstDraft.Tests
           Stats playerStats = new(29, 52);
           Player player = new ("Zaza", playerStats);
 
-          bat.TakeDamage(5, player);
+          bat.TakeDamage(10, player);
           
           // Act
-          bat.HealHP(5);
+          bat.HealHP(11);
           
           // Assert
-          Assert.Equal(20, bat.CurrentHP);
+          Assert.Equal(150, bat.CurrentHP);
       }
 
         /* ~~~~~~~~~~~ EXP ~~~~~~~~~~~ */

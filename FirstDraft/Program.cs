@@ -50,7 +50,7 @@ namespace FirstDraft
                 prevExp = Experience;
                 Experience -= ExpThreshold;
                 logMessage += LevelUp();
-                logMessage += $"Current EXP: {Experience}\n";
+                logMessage += $"Previous EXP: {prevExp}, Current EXP: {Experience}\n";
             }
             return logMessage;
         }
@@ -102,6 +102,7 @@ namespace FirstDraft
             }
 
             double incomingDamage = damage;
+            // Player Defense: 52
             double mitigationFactor = (255.0 - BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
             
@@ -144,9 +145,6 @@ namespace FirstDraft
             string logMessage = $"{Name} defeated {monster.Name}\n";
             logMessage += ExpUp(monster.ExpGiven);
             return logMessage;
-
-            // Console.WriteLine($"{Name} defeated {monster.Name}\n");
-            // ExpUp(monster.ExpGiven);
         }
     }
 
@@ -167,6 +165,8 @@ namespace FirstDraft
             }
 
             double incomingDamage = damage;
+            // Bat: (150, 5, 5, 6)
+            //Wolf: (150, 7, 6, 7)
             double mitigationFactor = (255.0 - BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
 
