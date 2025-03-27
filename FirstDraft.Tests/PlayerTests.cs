@@ -9,7 +9,7 @@ namespace FirstDraft.Tests
 
         // Assuming EXP doesn't cause ding; for that, use [Player_ExpCarriesOver_AfterLevelUp()]
         [Fact]
-        public void Player_GainsEXP_Correctly()
+        public void ExpUp_GainOneExp_ExperienceIncreaseByOne()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -25,7 +25,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_ExpCarriesOver_AfterLevelUp() 
+        public void ExpUp_MoreExpThanNeededToLevelUp_ExtraExpCarriesOver() 
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -41,7 +41,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_LevelsUp_MultipleTimes()
+        public void ExpUp_GainEnoughExpToLevelUpMultipleTimes_LevelsUpMultipleTimes()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -57,7 +57,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_ExpUpCausesMultipleLevelUps_SameCurrentHP()
+        public void ExpUp_GainMultipleLevels_CurrentHPRemainsTheSame()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -74,7 +74,8 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_LevelsUp_WhenExactExpThreasholdReached()
+        // public void Player_LevelsUp_WhenExactExpThreasholdReached()
+        public void ExpUp_GainExactAmountOfExpToLevelUp_LevelIncreaseByOne()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -90,7 +91,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_CannotGain_NegativeExp()
+        public void ExpUp_NegativeExp_ExperienceDoesNotChange()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -104,7 +105,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_ZeroExperience_DoesNothing()
+        public void ExpUp_ZeroExpGained_ExperienceDoesNotChange()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -119,7 +120,7 @@ namespace FirstDraft.Tests
         }
         
         [Fact]
-        public void Player_KillMonster_GivesCorrectExp()
+        public void ExpUp_MonsterKilled_CorrectExpGained()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -134,7 +135,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_KillMonster_CausesLevelUp()
+        public void ExpUp_KillMonsterWithEnoughExpToLevelUp_LevelUp()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -151,7 +152,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_MultipleKillMonster_CausesMultiplePlayerLevelUPs()
+        public void ExpUp_KillMultipleMonsters_GainMultipleLevels()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -173,7 +174,7 @@ namespace FirstDraft.Tests
         
         /* ~~~~~~~~~~~ Stats ~~~~~~~~~~~ */
         [Fact]
-        public void Player_StatsInitialize_Correctly()
+        public void Player_InstanceCreated_InitializedStatsAreCorrect()
         {
             // Arrange + Act
             Stats playerStats = new(29, 52);
@@ -185,7 +186,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_LevelUp_CorrectlyIncreaseStats()
+        public void ExplUp_LevelUp_BaseStatsIncreaseAppropriately()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -201,7 +202,7 @@ namespace FirstDraft.Tests
 
         /* ~~~~~~~~~~~ Damage ~~~~~~~~~~~ */
         [Fact]
-        public void Player_TakesDamage_HPCannotGoBelowZero()
+        public void TakeDamage_MoreDamageThanHP_HPDoesNotGoBelowZero()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -218,7 +219,7 @@ namespace FirstDraft.Tests
         }
         
         [Fact]
-        public void Player_TakingNegativeDamage_DoesNotChangeHP()
+        public void TakeDamage_NegativeDamage_DoesNotChangeHP()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -235,7 +236,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_DefenseFormula_CorrectlyMitigatesDamage()
+        public void TakeDamage_DefenseFormula_CorrectDamageTaken()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -251,7 +252,7 @@ namespace FirstDraft.Tests
 
         /* ~~~~~~~~~~~ HP ~~~~~~~~~~~ */
         [Fact]
-        public void Player_InitializesCurrentHP_MatchesMaxHP()
+        public void Player_InstanceCreated_CurrentHPMatchesMaxHP()
         {
             // Arrange + Act
             Stats playerStats = new(29, 52);
@@ -264,7 +265,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_HealsCannotExceed_MaxHP()
+        public void HealHP_HealMoreThanMaxHP_CurrentHPMatchesMaxHP()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -284,7 +285,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_LevelUp_IncreasesMaxHP()
+        public void LevelUp_MaxHP_Increase()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -304,7 +305,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_NegativeHeal_DoesNotChangeHP() 
+        public void HealHP_NegativeHeal_DoesNotChangeHP() 
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -321,7 +322,8 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_Constructor_CustomMaxHP_InitializesCorrectly()
+        // public void Player_Constructor_CustomMaxHP_InitializesCorrectly()
+        public void Player_InstantiateWithCustomMaxHP_InstanceHasCustomMaxHP()
         {
             // Arrange + Act
             Stats playerStats = new(29, 52);
