@@ -74,7 +74,6 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        // public void Player_LevelsUp_WhenExactExpThreasholdReached()
         public void ExpUp_GainExactAmountOfExpToLevelUp_LevelIncreaseByOne()
         {
             // Arrange
@@ -202,7 +201,7 @@ namespace FirstDraft.Tests
 
         /* ~~~~~~~~~~~ Damage ~~~~~~~~~~~ */
         [Fact]
-        public void TakeDamage_MoreDamageThanHP_HPDoesNotGoBelowZero()
+        public void TakeDamage_TakeMoreDamageThanCurrentHP_CurrentHPDoesNotGoNegative()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -211,7 +210,7 @@ namespace FirstDraft.Tests
 
             // Act
             // Take more damage than HP
-            player.TakeDamage(999, bat);
+            player.TakeDamage(99999, bat);
 
             // Asssert
             // HP should be 0, not negative
@@ -219,7 +218,7 @@ namespace FirstDraft.Tests
         }
         
         [Fact]
-        public void TakeDamage_NegativeDamage_DoesNotChangeHP()
+        public void TakeDamage_NegativeDamage_DoesNotChangeCurrentHP()
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -252,7 +251,7 @@ namespace FirstDraft.Tests
 
         /* ~~~~~~~~~~~ HP ~~~~~~~~~~~ */
         [Fact]
-        public void Player_InstanceCreated_CurrentHPMatchesMaxHP()
+        public void Player_CreateInstance_CurrentHPMatchesMaxHP()
         {
             // Arrange + Act
             Stats playerStats = new(29, 52);
@@ -277,7 +276,7 @@ namespace FirstDraft.Tests
 
             // Act
             // Try to heal more than max HP
-            player.HealHP(200);
+            player.HealHP(99999);
 
             // Assert
             // HP should not exceed [MaxHP]
@@ -305,7 +304,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void HealHP_NegativeHeal_DoesNotChangeHP() 
+        public void HealHP_NegativeHeal_DoesNotChangeCurrentHP() 
         {
             // Arrange
             Stats playerStats = new(29, 52);
@@ -322,7 +321,6 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        // public void Player_Constructor_CustomMaxHP_InitializesCorrectly()
         public void Player_InstantiateWithCustomMaxHP_InstanceHasCustomMaxHP()
         {
             // Arrange + Act

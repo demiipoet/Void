@@ -9,7 +9,7 @@ namespace FirstDraft.Tests
     {
         /* ~~~~~~~~~~~ Monster Factory ~~~~~~~~~~~ */
         [Fact]
-        public void Monster_MonsterFactory_CreatesCorrectly()
+        public void CreateMonster_CreateMonsterInstance_Correctly()
         {
             // Arrange + Act
             Monster wolf = MonsterFactory.CreateMonster(2);
@@ -22,18 +22,18 @@ namespace FirstDraft.Tests
         }
         
         [Fact]
-        public void Monster_MonsterFactoryDisplaysArgumentException_OnInvalidMonsterID()
+        public void CreateMonster_DisplayArgumentException_OnInvalidMonsterID()
         {
             // Arrange + Act + Assert
-            Assert.Throws<ArgumentException>(() => MonsterFactory.CreateMonster(999));
+            Assert.Throws<ArgumentException>(() => MonsterFactory.CreateMonster(99999));
         }
 
         [Fact]
-        public void Monster_MonsterFactoryDisplaysCorrectMessage_OnInvalidMonsterID()
+        public void CreateMonster_DisplaysCorrectMessage_OnInvalidMonsterID()
         {
             // Arrange + Act
             var exception = 
-                Assert.Throws<ArgumentException>(() => MonsterFactory.CreateMonster(999));
+                Assert.Throws<ArgumentException>(() => MonsterFactory.CreateMonster(99999));
             
             // Assert
             Assert.Equal("Invalid MonsterID", exception.Message);
@@ -42,7 +42,7 @@ namespace FirstDraft.Tests
 
          /* ~~~~~~~~~~~ Damage ~~~~~~~~~~~ */
         [Fact]
-        public void Monster_TakesDamage_Correctly()
+        public void TakeDamage_MonsterTakeDamage_CorrectAmount()
         {
             // Arrange
             Monster bat = MonsterFactory.CreateMonster(1);
@@ -58,24 +58,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Monster_TakesDamageAndHealsCorrectly()
-        {
-            // Arrange
-            // HP: 20
-            Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52);
-            Player player = new ("Zaza", playerStats);
-
-            // Act
-            bat.TakeDamage(10, player);
-            bat.HealHP(5);
-
-            // Assert
-            Assert.Equal(144, bat.CurrentHP);
-        }
-
-        [Fact]
-        public void Monster_TakingNegativeDamage_DoesNotChangeHP()
+        public void TakeDamage_TakingNegativeDamage_DoesNotChangeHP()
         {
             // Arrange
             Monster bat = MonsterFactory.CreateMonster(1); 
@@ -92,7 +75,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Monster_Dies_WhenHPReachesZeroExactly()
+        public void Battle_MonsterDies_HPReachesZeroExactly()
         {
             // Arrange
             // Starts with 20 HP
@@ -112,7 +95,24 @@ namespace FirstDraft.Tests
 
         /* ~~~~~~~~~~~ HP ~~~~~~~~~~~ */
         [Fact]
-        public void Monster_InitializesCurrentHP_MatchesMaxHP()
+        public void HealHP_Heal_CorrectAmount()
+        {
+            // Arrange
+            // HP: 20
+            Monster bat = MonsterFactory.CreateMonster(1);
+            Stats playerStats = new(29, 52);
+            Player player = new ("Zaza", playerStats);
+
+            // Act
+            bat.TakeDamage(10, player);
+            bat.HealHP(5);
+
+            // Assert
+            Assert.Equal(144, bat.CurrentHP);
+        }
+
+        [Fact]
+            public void Monster_CreateInstance_CurrentHPMatchesMaxHP()
         {
             // Arrange + Act
             // Starts with 20 HP
@@ -126,7 +126,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Monster_TakeDamage_HPCannotGoBelowZero()
+        public void TakeDamage_TakeMoreDamageThanCurrentHP_CurrentHPDoesNotGoNegative()
         {
             // Arrange
             Monster wolf = MonsterFactory.CreateMonster(2);
@@ -134,14 +134,14 @@ namespace FirstDraft.Tests
             Player player = new ("Zaza", playerStats);
             
             // Act
-            wolf.TakeDamage(999, player);
+            wolf.TakeDamage(99999, player);
             
             // Assert
             Assert.Equal(0, wolf.CurrentHP);
         }
 
        [Fact]
-       public void Monster_TakeNegativeDamage_DoesNotChangeHP()
+       public void TakeDamage_NegativeDamage_DoesNotChangeCurrentHP()
        {
            // Arrange
            Monster wolf = MonsterFactory.CreateMonster(2);
@@ -149,14 +149,14 @@ namespace FirstDraft.Tests
            Player player = new ("Zaza", playerStats);
            
            // Act
-           wolf.TakeDamage(-999, player);
+           wolf.TakeDamage(-99999, player);
            
            // Assert
            Assert.Equal(150, wolf.CurrentHP);
        } 
 
       [Fact]
-      public void Monster_HealsCannotExceed_MaxHP()
+      public void HealHP_HealMoreThanMaxHP_CurrentHPMatchesMaxHP()
       {
           // Arrange
           Monster bat = MonsterFactory.CreateMonster(1);
@@ -166,28 +166,28 @@ namespace FirstDraft.Tests
           bat.TakeDamage(15, player);
           
           // Act
-          bat.HealHP(222);
+          bat.HealHP(99999);
           
           // Assert
           Assert.Equal(bat.MaxHP, bat.CurrentHP);
       } 
         
       [Fact]
-      public void Monster_NegativeHeal_DoesNotChangeHP()
+      public void HealHP_NegativeHeal_DoesNotChangeCurrentHP()
       {
           // Arrange
           Monster wolf = MonsterFactory.CreateMonster(2);
           int hpBefore = wolf.CurrentHP;
           
           // Act
-          wolf.HealHP(-222);
+          wolf.HealHP(999999);
           
           // Assert
           Assert.Equal(hpBefore, wolf.CurrentHP);
       }
       
       [Fact]
-      public void Monster_HealExactly_ToFullHP()
+      public void HealHP_HealExactlyToMaxHP_CurrentHPMatchesMaxHP()
       {
           // Arrange
           Monster bat = MonsterFactory.CreateMonster(1);
@@ -205,7 +205,7 @@ namespace FirstDraft.Tests
 
         /* ~~~~~~~~~~~ EXP ~~~~~~~~~~~ */
         [Fact]
-        public void Monster_KillMonster_GivesCorrectExp()
+        public void KillMonster_PlayerKillMonster_PlayerReceivesCorrectExp()
         {
             // Arrange
             Stats playerStats = new(29, 52);

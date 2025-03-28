@@ -67,9 +67,9 @@ namespace FirstDraft
 
             int prevMaxHP = MaxHP;
             MaxHP += 50;
-            if (MaxHP > 999)
+            if (MaxHP > 9999)
             {
-                MaxHP = 999;
+                MaxHP = 9999;
             }
 
             int prevStrength = BaseStats.Strength;
