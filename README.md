@@ -49,16 +49,7 @@ cd Void
 - **Run Unit Tests:** `dotnet test FirstDraft.Tests`
 
 ### 👾 Example Output
-```csharp
-Welcome to Void.
-
-A wild [Monster] Bat appears!
-[Player] Zaza's HP: 300/300
-[Monster] Bat's HP: 150/150
-
---- Turn 1 ---
-Attack (A), Defend (D), or Heal (H)?
-```
+![Void Turn-Based Combat Demo](https://github.com/demiipoet/Void/blob/main/demo/void_demo.gif)
 
 ---
 
