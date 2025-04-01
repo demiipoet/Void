@@ -196,7 +196,6 @@ namespace FirstDraft
     /* ~~~~~~~~~~~~ Game Manager (Handles Combat) ~~~~~~~~~~~~ */
     public static class Game
     {
-        // public static void SaveCombatLog(string fileName = "combat_log.txt", string folderName = "Logs")
         public static void SaveCombatLog(string fileName, string folderName = "Logs")
         {
             try
@@ -204,7 +203,7 @@ namespace FirstDraft
                 Directory.CreateDirectory(folderName);
                 string fullPath = Path.Combine(folderName, fileName);
                 File.WriteAllLines(fullPath, combatLog);
-                Console.WriteLine($"\nCombat log saved to {Path.GetFullPath(fullPath)}");
+                // Console.WriteLine($"\nCombat log saved to {Path.GetFullPath(fullPath)}");
             }
             catch (Exception ex)
             {
@@ -223,14 +222,17 @@ namespace FirstDraft
             string? choice;
             do
             {
-                Console.WriteLine("Attack (A), Defend (D), or Heal (H)? ");
+                // Console.WriteLine("Attack (A), Defend (D), or Heal (H)? ");
+                Console.WriteLine("Attack (A) or Defend (D)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
-                if (choice != "A" && choice != "D" && choice != "H")
+                // if (choice != "A" && choice != "D" && choice != "H")
+                if (choice != "A" && choice != "D")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
-            } while (choice != "A" && choice != "D" && choice != "H");
+            // } while (choice != "A" && choice != "D" && choice != "H");
+            } while (choice != "A" && choice != "D");
 
             return choice;
         }

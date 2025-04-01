@@ -1,0 +1,71 @@
+
+A wild [Monster] Bat appears!
+[Player] Freya's HP: 300/300
+[Monster] Bat's HP: 150/150
+
+
+--- Turn 1 ---
+
+[Player] Freya attacks [Monster] Bat for 36 damage!
+[Player] Freya's HP: 300/300
+[Monster] Bat's HP: 114/150
+
+[Monster] Bat attacks [Player] Freya for 7 damage!
+[Player] Freya's HP: 293/300
+[Monster] Bat's HP: 114/150
+
+--- Turn 2 ---
+[Player] Freya defends!
+
+[Monster] Bat attacks [Player] Freya for 4 damage!
+[Player] Freya's HP: 289/300
+[Monster] Bat's HP: 114/150
+
+--- Turn 3 ---
+[Player] Freya defends!
+
+[Monster] Bat attacks [Player] Freya for 5 damage!
+[Player] Freya's HP: 284/300
+[Monster] Bat's HP: 114/150
+
+--- Turn 4 ---
+
+[Player] Freya attacks [Monster] Bat for 32 damage!
+[Player] Freya's HP: 284/300
+[Monster] Bat's HP: 82/150
+
+[Monster] Bat attacks [Player] Freya for 10 damage!
+[Player] Freya's HP: 274/300
+[Monster] Bat's HP: 82/150
+
+--- Turn 5 ---
+
+[Player] Freya attacks [Monster] Bat for 33 damage!
+[Player] Freya's HP: 274/300
+[Monster] Bat's HP: 49/150
+
+[Monster] Bat attacks [Player] Freya for 10 damage!
+[Player] Freya's HP: 264/300
+[Monster] Bat's HP: 49/150
+
+--- Turn 6 ---
+
+[Player] Freya attacks [Monster] Bat for 33 damage!
+[Player] Freya's HP: 264/300
+[Monster] Bat's HP: 16/150
+
+[Monster] Bat attacks [Player] Freya for 9 damage!
+[Player] Freya's HP: 255/300
+[Monster] Bat's HP: 16/150
+
+--- Turn 7 ---
+
+[Player] Freya attacks [Monster] Bat for 35 damage!
+[Player] Freya's HP: 255/300
+[Monster] Bat's HP: 0/150
+
+[Player] Freya defeated [Monster] Bat
+
+[Player] Freya gained 5 EXP!
+Current EXP: 5
+
