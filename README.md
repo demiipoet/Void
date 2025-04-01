@@ -76,8 +76,7 @@ Attack (A), Defend (D), or Heal (H)?
 - Inspired by classic and modern JRPGs, such as Final Fantasy VI, Persona 5, and Dragon Quest IX
 
 ## 📄 License
-The source code for Void is licensed under the MIT License.
+The source code for Void is licensed under the MIT License. For details, see the LICENSE file.
 
-All original narrative content and story assets are licensed under CC BY-NC 4.0. This means you’re free to share and adapt the content with attribution, but not for commercial purposes.
+The narrative content in this project is shared under the [CC BY-NC 4.0 License](https://creativecommons.org/licenses/by-nc/4.0/).
 
-For details, see the LICENSE file.
