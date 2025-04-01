@@ -1,0 +1,71 @@
+
+A wild [Monster] Bat appears!
+[Player] Zaza's HP: 300/300
+[Monster] Bat's HP: 150/150
+
+
+--- Turn 1 ---
+[Player] Zaza defends!
+
+[Monster] Bat attacks [Player] Zaza for 6 damage!
+[Player] Zaza's HP: 294/300
+[Monster] Bat's HP: 150/150
+
+--- Turn 2 ---
+
+[Player] Zaza attacks [Monster] Bat for 33 damage!
+[Player] Zaza's HP: 294/300
+[Monster] Bat's HP: 117/150
+
+[Monster] Bat attacks [Player] Zaza for 8 damage!
+[Player] Zaza's HP: 286/300
+[Monster] Bat's HP: 117/150
+
+--- Turn 3 ---
+
+[Player] Zaza attacks [Monster] Bat for 36 damage!
+[Player] Zaza's HP: 286/300
+[Monster] Bat's HP: 81/150
+
+[Monster] Bat attacks [Player] Zaza for 11 damage!
+[Player] Zaza's HP: 275/300
+[Monster] Bat's HP: 81/150
+
+--- Turn 4 ---
+
+[Player] Zaza attacks [Monster] Bat for 36 damage!
+[Player] Zaza's HP: 275/300
+[Monster] Bat's HP: 45/150
+
+[Monster] Bat attacks [Player] Zaza for 11 damage!
+[Player] Zaza's HP: 264/300
+[Monster] Bat's HP: 45/150
+
+--- Turn 5 ---
+[Player] Zaza defends!
+
+[Monster] Bat attacks [Player] Zaza for 6 damage!
+[Player] Zaza's HP: 258/300
+[Monster] Bat's HP: 45/150
+
+--- Turn 6 ---
+
+[Player] Zaza attacks [Monster] Bat for 35 damage!
+[Player] Zaza's HP: 258/300
+[Monster] Bat's HP: 10/150
+
+[Monster] Bat attacks [Player] Zaza for 11 damage!
+[Player] Zaza's HP: 247/300
+[Monster] Bat's HP: 10/150
+
+--- Turn 7 ---
+
+[Player] Zaza attacks [Monster] Bat for 33 damage!
+[Player] Zaza's HP: 247/300
+[Monster] Bat's HP: 0/150
+
+[Player] Zaza defeated [Monster] Bat
+
+[Player] Zaza gained 5 EXP!
+Current EXP: 5
+

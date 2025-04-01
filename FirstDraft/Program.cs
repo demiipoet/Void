@@ -60,65 +60,47 @@ namespace FirstDraft
             int prevLevel = Level;
             Level++;
 
-            if (Level > 99)
-            {
-                Level = 99;
-            }
+            Level = Math.Min(99, Level);
 
             int prevMaxHP = MaxHP;
             MaxHP += 50;
-            if (MaxHP > 9999)
-            {
-                MaxHP = 9999;
-            }
+            MaxHP = Math.Min(9999, MaxHP);
 
             int prevStrength = BaseStats.Strength;
             BaseStats.Strength += 10;
-            if (BaseStats.Strength> 999)
-            {
-                BaseStats.Strength = 999;
-            }
+            BaseStats.Strength = Math.Min(999, BaseStats.Strength);
 
             int prevDefense = BaseStats.Defense;
             BaseStats.Defense += 10;
-            if (BaseStats.Defense > 999)
-            {
-                BaseStats.Defense = 999;
-            }
+            BaseStats.Defense= Math.Min(999, BaseStats.Defense);
 
             /* ~~~~~~~~ Written for debugging purposes ~~~~~~~~ */
-            return $"{Name} leveled up!\n" + 
+            return
+            $"{Name} leveled up!\n" + 
             $"Previous Level: {prevLevel}, New Level: {Level}\n" +
             $"Previous Max HP: {prevMaxHP}, New Max HP: {MaxHP}\n" + 
             $"Previous Strength: {prevStrength}, New Strength: {BaseStats.Strength}\n" +
             $"Previous Defense: {prevDefense}, New Defense: {BaseStats.Defense}\n\n";
         }
         
-        public string TakeDamage(double damage, Monster monster)
+        public (int FinalDamage, string Message) TakeDamage(double incomingDamage, Monster monster)
         {
-            if (damage < 0)
+            if (incomingDamage < 0)
             {
-                return $"(Error) {Name} cannot take negative damage! ({damage})";
+                return (0, $"(Error) {Name} cannot take negative damage! ({incomingDamage})");
             }
 
-            double incomingDamage = damage;
-            // Player Defense: 52
             double mitigationFactor = (255.0 - BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
-            
-            /* Do we need this in addition to the above? */
-            // finalDamage = Math.Max(finalDamage, 1);
-
-            if (finalDamage > 9999)
-            {
-                finalDamage = 9999;
-            }
-
+            finalDamage = Math.Min(9999, finalDamage);
             CurrentHP = Math.Max(CurrentHP - finalDamage, 0);
 
-            return $"{monster.Name} attacks {Name} for {finalDamage} damage!\n" +
+            string message =
+            $"{monster.Name} attacks {Name} for {finalDamage} damage!\n" +
             $"{Name}'s HP: {CurrentHP}/{MaxHP}\n" + 
             $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}";
+
+            return (finalDamage, message);
         }
 
         public void HealHP(int amount)
@@ -157,29 +139,26 @@ namespace FirstDraft
         public int ExpGiven { get; } = expGiven;
         public Stats BaseStats {get; private set; } = baseStats;
 
-        public string TakeDamage(int damage, Player player)
+        public (int FinalDamage, string Message) TakeDamage(int incomingDamage, Player player)
         {
-            if (damage < 0)
+            if (incomingDamage < 0)
             {
-                return $"(Error) {Name} cannot take negative damage! ({damage})";
+                return (0, $"(Error) {Name} cannot take negative damage! ({incomingDamage})");
             }
 
-            double incomingDamage = damage;
             // Bat: (150, 5, 5, 6)
             //Wolf: (150, 7, 6, 7)
             double mitigationFactor = (255.0 - BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
-
-            if (finalDamage >= 9999)
-            {
-                finalDamage = 9999;
-            }
-
+            finalDamage = Math.Min(9999, finalDamage);
             CurrentHP = Math.Max(CurrentHP - finalDamage, 0);
 
-            return $"\n{player.Name} attacks {Name} for {finalDamage} damage!\n" +
+            string message =
+            $"\n{player.Name} attacks {Name} for {finalDamage} damage!\n" +
             $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
             $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
+
+            return (finalDamage, message);
         }
 
         public void HealHP(int amount)
@@ -264,6 +243,7 @@ namespace FirstDraft
             Console.WriteLine(message);
         }
         
+        /*
         public static void ShowCombatLog()
         {
             Console.WriteLine("\n======== Start Combat Log ========");
@@ -273,6 +253,7 @@ namespace FirstDraft
             }
            Console.WriteLine("======== End Combat Log ========\n"); 
         }
+        */
 
         public static void Battle(Player player, Monster monster)
         {
@@ -297,7 +278,7 @@ namespace FirstDraft
                     {
                         int playerDamageDealt = rng.Next(3, 8) + player.BaseStats.Strength;
 
-                        string damageMessage = monster.TakeDamage(playerDamageDealt, player);
+                        var (_, damageMessage) = monster.TakeDamage(playerDamageDealt, player);
                         Log(damageMessage);
 
                         if (monster.CurrentHP <= 0)
@@ -319,14 +300,14 @@ namespace FirstDraft
                     {
                         monsterDamageDealt = rng.Next(3, 9) + monster.BaseStats.Strength;
                         double reducedDamage = monsterDamageDealt / 2;
-                        string damageMessage = player.TakeDamage(reducedDamage, monster);
+                        var (_, damageMessage) = player.TakeDamage(reducedDamage, monster);
 
                         Log(damageMessage);
                     }
                     else
                     {
                         monsterDamageDealt = rng.Next(3, 9) + monster.BaseStats.Strength;
-                        string damageMessage = player.TakeDamage(monsterDamageDealt, monster);
+                        var (_, damageMessage) = player.TakeDamage(monsterDamageDealt, monster);
 
                         Log(damageMessage);
                     }
@@ -350,25 +331,16 @@ namespace FirstDraft
             Console.WriteLine("\nWelcome to Void.");
 
             Stats playerStats = new(29, 52);
-            Player player = new("Zaza", playerStats);
+            Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             Monster wolf = MonsterFactory.CreateMonster(2);
 
             Game.Battle(player, bat);
-            Console.WriteLine("\n~~~~~~~~");
-            Game.ShowCombatLog();
+            // Game.ShowCombatLog();
 
             string logName = Game.GenerateLogFilename(bat.Name ?? "");
             Game.SaveCombatLog(logName);
 
-            /*
-            Console.WriteLine("\n~~~~~~~~");
-
-            Game.Battle(player, wolf);
-            Console.WriteLine("\n~~~~~~~~");
-            Game.ShowCombatLog();
-            */
-            
         }
     }
 
