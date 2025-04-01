@@ -80,3 +80,8 @@ The source code for Void is licensed under the MIT License. For details, see the
 
 The narrative content in this project is shared under the [CC BY-NC 4.0 License](https://creativecommons.org/licenses/by-nc/4.0/).
 
+## 🙋 About the Creator
+
+I'm a former QA Analyst with 5 years of experience in Agile teams, now building *Void* full-time as a personal game development portfolio project. I’m currently learning Unity with the long-term goal of launching *Void* on the Nintendo Switch.
+
+
