@@ -1,0 +1,99 @@
+
+A wild [Monster] Bat appears!
+[Player] Freya's HP: 300/300
+[Monster] Bat's HP: 150/150
+
+
+--- Turn 1 ---
+
+[Player] Freya attacks [Monster] Bat for 35 damage!
+[Player] Freya's HP: 300/300
+[Monster] Bat's HP: 115/150
+
+[Monster] Bat attacks [Player] Freya for 11 damage!
+[Player] Freya's HP: 289/300
+[Monster] Bat's HP: 115/150
+
+--- Turn 2 ---
+
+[Player] Freya attacks [Monster] Bat for 36 damage!
+[Player] Freya's HP: 289/300
+[Monster] Bat's HP: 79/150
+
+[Monster] Bat attacks [Player] Freya for 8 damage!
+[Player] Freya's HP: 281/300
+[Monster] Bat's HP: 79/150
+
+--- Turn 3 ---
+
+[Player] Freya defends!
+
+[Monster] Bat attacks [Player] Freya for 4 damage!
+[Player] Freya's HP: 277/300
+[Monster] Bat's HP: 79/150
+
+--- Turn 4 ---
+
+[Player] Freya defends!
+
+[Monster] Bat attacks [Player] Freya for 6 damage!
+[Player] Freya's HP: 271/300
+[Monster] Bat's HP: 79/150
+
+--- Turn 5 ---
+
+[Player] Freya heals 50 HP!
+[Player] Freya's HP: 300/300
+
+[Monster] Bat attacks [Player] Freya for 11 damage!
+[Player] Freya's HP: 289/300
+[Monster] Bat's HP: 79/150
+
+--- Turn 6 ---
+
+[Player] Freya heals 50 HP!
+[Player] Freya's HP: 300/300
+
+[Monster] Bat attacks [Player] Freya for 9 damage!
+[Player] Freya's HP: 291/300
+[Monster] Bat's HP: 79/150
+
+--- Turn 7 ---
+
+[Player] Freya defends!
+
+[Monster] Bat attacks [Player] Freya for 5 damage!
+[Player] Freya's HP: 286/300
+[Monster] Bat's HP: 79/150
+
+--- Turn 8 ---
+
+[Player] Freya attacks [Monster] Bat for 36 damage!
+[Player] Freya's HP: 286/300
+[Monster] Bat's HP: 43/150
+
+[Monster] Bat attacks [Player] Freya for 7 damage!
+[Player] Freya's HP: 279/300
+[Monster] Bat's HP: 43/150
+
+--- Turn 9 ---
+
+[Player] Freya attacks [Monster] Bat for 32 damage!
+[Player] Freya's HP: 279/300
+[Monster] Bat's HP: 11/150
+
+[Monster] Bat attacks [Player] Freya for 11 damage!
+[Player] Freya's HP: 268/300
+[Monster] Bat's HP: 11/150
+
+--- Turn 10 ---
+
+[Player] Freya attacks [Monster] Bat for 34 damage!
+[Player] Freya's HP: 268/300
+[Monster] Bat's HP: 0/150
+
+[Player] Freya defeated [Monster] Bat
+
+[Player] Freya gained 5 EXP!
+Current EXP: 5
+

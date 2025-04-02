@@ -332,7 +332,7 @@ namespace FirstDraft
                     }
                     else if (processedBattleChoice == "D")
                     {
-                        Log($"{player.Name} defends!\n");
+                        Log($"\n{player.Name} defends!\n");
                     }
                     else if (processedBattleChoice == "H")
                     {
