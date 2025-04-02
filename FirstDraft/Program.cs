@@ -7,7 +7,7 @@ using System.IO;
 namespace FirstDraft
 {
     /* ~~~~~~~~~~~~ Magic ~~~~~~~~~~~~ */
-    public class Magic()
+    public class MagicList()
     {
         public int Cure { get; private set; } = 10;
     }
@@ -120,6 +120,7 @@ namespace FirstDraft
             return (finalDamage, message);
         }
 
+        /*
         public (int HealAmount, string Message) HealHP(int amount)
         {
             if (amount < 0)
@@ -127,12 +128,6 @@ namespace FirstDraft
                 return (0, $"(Error) {Name} cannot heal a negative amount! ({amount})");
             }
 
-            /*
-            Magic cure = new();
-
-            int healAmount = cure.Cure;
-            return (healAmount, "WIP");
-            */
 
             int finalHealAmount = Math.Min(9999, amount);
             CurrentHP = Math.Min(CurrentHP + amount, MaxHP);
@@ -144,6 +139,26 @@ namespace FirstDraft
             // Console.WriteLine($"{Name} healed {amount} HP. HP: {CurrentHP}/{MaxHP}");
 
             return (amount, message);
+        }
+        */
+        public (int HealAmount, string Message) HealHP()
+        {
+            // Spell Power: 10
+            MagicList cure = new(); 
+            int healAmount = cure.Cure * 4 + (Level * BaseStats.Magic * 10 / 32); // (40) + (10.9) = 50.9
+
+            if (healAmount < 0)
+            {
+                return (0, $"(Error) {Name} cannot heal a negative amount! ({healAmount})");
+            }
+
+            CurrentHP = Math.Min(CurrentHP + healAmount, MaxHP);
+
+            string message =
+                $"\n{Name} heals {healAmount} HP!\n" +
+                $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
+
+            return (healAmount, message);
         }
 
         public string KillMonster(Monster monster)
@@ -321,7 +336,7 @@ namespace FirstDraft
                     }
                     else if (processedBattleChoice == "H")
                     {
-                        var (_, healMessage) = player.HealHP(1);
+                        var (_, healMessage) = player.HealHP();
                         Log(healMessage);
                     }
 
