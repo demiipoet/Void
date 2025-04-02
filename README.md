@@ -1,11 +1,11 @@
-# ⚔️ Void: A JRPG-Inspired Engine Built from the Ground Up
+# Void: A JRPG-Inspired Engine Built from the Ground Up
 
 A turn-based JRPG-style engine written in C#, inspired by the *Final Fantasy* and *Persona* game series.
 This project explores core game mechanics like stat-based combat, experience-based leveling, and modular monster generation — with full unit testing to support robust development.
 
 ---
 
-## 🎮 Features
+## Features
 
 - Custom player and monster classes with upgradable stats
 - Fully tested EXP gain, leveling, damage formulas, and healing logic
@@ -15,45 +15,45 @@ This project explores core game mechanics like stat-based combat, experience-bas
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - **Language**: C#
 - **Testing**: [xUnit](https://xunit.net/)
 - **Editor**: VS Code
 - **Runtime**: .NET 9+
 
-## 🚀 Getting Started
+## Getting Started
 
-### 🔧 Prerequisites
+### Prerequisites
 
 - [.NET SDK](https://dotnet.microsoft.com/en-us/download) (v9.0 or higher)
 - Git (for cloning the repo)
 - A C#-compatible editor (e.g., VS Code)
 
-### 📥 Clone Repo
+### Clone Repo
 
 ```bash
 git clone https://github.com/demiipoet/Void.git
 cd Void
 ```
 
-### ✅ Testing Coverage
+### Testing Coverage
 - EXP thresholds and level-up logic
 - MaxHP, Strength, Defense scaling
 - Combat damage formulas with mitigation
 - Edge cases (negative EXP, damage limits, healing caps)
 - Monster factory and error handling
 
-### ⚡ Quick Commands
+### Quick Commands
 - **Run Game:** `dotnet run --project FirstDraft`
 - **Run Unit Tests:** `dotnet test FirstDraft.Tests`
 
-### 👾 Example Output
+### Example Output
 ![Void Turn-Based Combat Demo](https://github.com/demiipoet/Void/blob/main/demo/combat_demo.gif)
 
 ---
 
-## 📋 Future Plans
+## Future Plans
 - Magic system
 - Summons
 - Random encounters
@@ -63,15 +63,15 @@ cd Void
 - Buffs and debuffs
 - Multiple enemy battles
 
-## 😼 Acknowledgements
+## Acknowledgements
 - Inspired by classic and modern JRPGs, such as Final Fantasy VI, Persona 5, and Dragon Quest IX
 
-## 📄 License
+## License
 The source code for Void is licensed under the MIT License. For details, see the LICENSE file.
 
 The narrative content in this project is shared under the [CC BY-NC 4.0 License](https://creativecommons.org/licenses/by-nc/4.0/).
 
-## 🙋 About the Creator
+## About the Creator
 
 I'm a former QA Analyst with 5 years of experience in Agile teams, now building *Void* full-time as a personal game development portfolio project. I’m currently learning Unity with the long-term goal of launching *Void* on the Nintendo Switch.
 
