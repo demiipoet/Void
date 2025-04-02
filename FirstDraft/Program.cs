@@ -6,21 +6,38 @@ using System.IO;
 
 namespace FirstDraft
 {
-    /* ~~~~~~~~~~~~ Stats ~~~~~~~~~~~~ */
-    public class Stats(int strength, int defense)
+    /* ~~~~~~~~~~~~ Magic ~~~~~~~~~~~~ */
+    public class Magic()
     {
-        // Player: 29
-        // Bat: 5
-        // Wolf: 6
+        public int Cure { get; private set; } = 10;
+    }
+
+    /* ~~~~~~~~~~~~ Stats ~~~~~~~~~~~~ */
+    public class Stats(int strength, int defense, int magic)
+    {
+        /*
+        Player: 29
+        Bat: 5
+        Wolf: 6
+        */
         public int Strength { get; set; } = strength; 
 
-        // Player: 52
-        // Bat: 6
-        // Wolf: 7
-        public int Defense { get; set; } = defense; 
+        /*
+        Player: 52
+        Bat: 6
+        Wolf: 7
+        */
+        public int Defense { get; set; } = defense;
+
+        /*
+        Player: 35
+        Bat: 7
+        Wolf: 8
+        */
+        public int Magic { get; set; } = magic;
 
     }
-    
+
     /* ~~~~~~~~~~~~ Player ~~~~~~~~~~~~ */
     public class Player(string name, Stats baseStats, int maxHP = 300)
     {
@@ -103,23 +120,30 @@ namespace FirstDraft
             return (finalDamage, message);
         }
 
-        public void HealHP(int amount)
+        public (int HealAmount, string Message) HealHP(int amount)
         {
             if (amount < 0)
             {
-                Console.WriteLine($"(Error) {Name} cannot heal a negative amount! ({amount})");
-                return;
+                return (0, $"(Error) {Name} cannot heal a negative amount! ({amount})");
             }
 
-            int prevHP = CurrentHP;
-            // Prevents [CurrentHP] from going above [MaxHP]
-            CurrentHP = Math.Min(CurrentHP + amount, MaxHP);
-            
-            Console.WriteLine($"{Name} healed {amount} HP. HP: {CurrentHP}/{MaxHP}");
+            /*
+            Magic cure = new();
 
-            /* ~~~~~~~~ Written for debugging purposes ~~~~~~~~ */
-            // Console.WriteLine($"{Name} healed {amount} HP.");
-            // Console.WriteLine($"Previous HP: {prevHP}, New HP: {CurrentHP}");
+            int healAmount = cure.Cure;
+            return (healAmount, "WIP");
+            */
+
+            int finalHealAmount = Math.Min(9999, amount);
+            CurrentHP = Math.Min(CurrentHP + amount, MaxHP);
+
+            string message =
+            $"\n{Name} heals {amount} HP!\n" +
+            $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
+
+            // Console.WriteLine($"{Name} healed {amount} HP. HP: {CurrentHP}/{MaxHP}");
+
+            return (amount, message);
         }
 
         public string KillMonster(Monster monster)
@@ -170,7 +194,8 @@ namespace FirstDraft
             }
 
             int prevHP = CurrentHP;
-            // Prevents [CurrentHP] from going above [MaxHP]
+            // amount = Math.Min(9999, MaxHP);
+            amount = Math.Min(amount, MaxHP);
             CurrentHP = Math.Min(CurrentHP + amount, MaxHP);
             
             // Console.WriteLine($"{Name} healed {amount} HP. HP: {CurrentHP}/{MaxHP}");
@@ -187,8 +212,8 @@ namespace FirstDraft
         public static Monster CreateMonster(int monsterID) =>
         monsterID switch
         {
-            1 => new("Bat", 150, 5, new Stats(5, 6)),
-            2 => new("Wolf", 150, 7, new Stats(6, 7)),
+            1 => new("Bat", 150, 5, new Stats(5, 6, 7)),
+            2 => new("Wolf", 150, 7, new Stats(6, 7, 8)),
             _ => throw new ArgumentException("Invalid MonsterID")
         };
     }
@@ -222,17 +247,17 @@ namespace FirstDraft
             string? choice;
             do
             {
-                // Console.WriteLine("Attack (A), Defend (D), or Heal (H)? ");
-                Console.WriteLine("Attack (A) or Defend (D)? ");
+                Console.WriteLine("Attack (A), Defend (D), or Heal (H)? ");
+                // Console.WriteLine("Attack (A) or Defend (D)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
-                // if (choice != "A" && choice != "D" && choice != "H")
-                if (choice != "A" && choice != "D")
+                if (choice != "A" && choice != "D" && choice != "H")
+                // if (choice != "A" && choice != "D")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
-            // } while (choice != "A" && choice != "D" && choice != "H");
-            } while (choice != "A" && choice != "D");
+            } while (choice != "A" && choice != "D" && choice != "H");
+            // } while (choice != "A" && choice != "D");
 
             return choice;
         }
@@ -294,6 +319,11 @@ namespace FirstDraft
                     {
                         Log($"{player.Name} defends!\n");
                     }
+                    else if (processedBattleChoice == "H")
+                    {
+                        var (_, healMessage) = player.HealHP(1);
+                        Log(healMessage);
+                    }
 
                     /* ~~~~ Monster Attacks ~~~~ */
                     int monsterDamageDealt;
@@ -332,7 +362,7 @@ namespace FirstDraft
         {
             Console.WriteLine("\nWelcome to Void.");
 
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             Monster wolf = MonsterFactory.CreateMonster(2);

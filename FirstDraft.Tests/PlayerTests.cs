@@ -9,10 +9,22 @@ namespace FirstDraft.Tests
         /* ~~~~~~~~~~~ EXP ~~~~~~~~~~~ */
 
         [Fact]
+        public void PlayerLevelUp_StrengthIncreaseWithLevelUp_DoesNotGoBeyond999()
+        {
+            // Arrange
+            Stats baseStats = new(29, 52, 35);
+            Player player = new("Freya", baseStats);
+            
+            // Act
+            
+            // Assert
+        }
+
+        [Fact]
         public void PlayerLevelUp_GainMoreThan99Levels_LevelStopsAt99()
         {
             // Arrange
-            Stats baseStats = new(29, 52);
+            Stats baseStats = new(29, 52, 35);
             Player player = new("Freya", baseStats);
             
             // Act
@@ -27,7 +39,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_GainOneExp_ExperienceIncreasesByOne()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             int expBefore = player.Experience;
 
@@ -43,7 +55,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_MoreExpThanNeededToLevelUp_ExtraExpCarriesOver() 
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
 
             // Act
@@ -59,7 +71,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_GainEnoughExpToLevelUpMultipleTimes_LevelsUpMultipleTimes()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
 
             // Act
@@ -75,7 +87,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_GainMultipleLevels_CurrentHPRemainsTheSame()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
 
             // Act
@@ -91,7 +103,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_GainExactAmountOfExpToLevelUp_LevelIncreaseByOne()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             int initialLevel = player.Level;
 
@@ -107,7 +119,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_NegativeExp_ExperienceDoesNotChange()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
 
             // Act
@@ -121,7 +133,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_ZeroExpGained_ExperienceDoesNotChange()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             int initialLevel = player.Level;
 
@@ -136,7 +148,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_MonsterKilled_CorrectExpGained()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             Monster wolf = MonsterFactory.CreateMonster(2);
 
@@ -151,10 +163,10 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_KillMonsterWithEnoughExpToLevelUp_LevelUp()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             // Enough to level up from 1 to 2 with 5 leftover
-            Monster wolf = new("Wolf", 30, 15, new Stats(3, 3));
+            Monster wolf = new("Wolf", 30, 15, new Stats(3, 3, 8));
             
             // Act
             player.KillMonster(wolf);
@@ -168,7 +180,7 @@ namespace FirstDraft.Tests
         public void PlayerExpUp_KillMultipleMonsters_GainMultipleLevels()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
 
@@ -186,11 +198,12 @@ namespace FirstDraft.Tests
         }
         
         /* ~~~~~~~~~~~ Stats ~~~~~~~~~~~ */
+        
         [Fact]
         public void Player_InstanceCreated_InitializedStatsAreCorrect()
         {
             // Arrange + Act
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Zazu", playerStats);
             
             // Assert
@@ -202,7 +215,7 @@ namespace FirstDraft.Tests
         public void PlayerExplUp_LevelUp_BaseStatsIncreaseAppropriately()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Freya", playerStats);
             
             // Act
@@ -218,7 +231,7 @@ namespace FirstDraft.Tests
         public void PlayerTakeDamage_Over9999_DamageStopsAt9999()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             
@@ -233,7 +246,7 @@ namespace FirstDraft.Tests
         public void PlayerTakeDamage_PlayerTakeDamage_CorrectAmount()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             
@@ -249,7 +262,7 @@ namespace FirstDraft.Tests
         public void PlayerTakeDamage_TakeMoreDamageThanCurrentHP_CurrentHPDoesNotGoNegative()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
 
@@ -266,7 +279,7 @@ namespace FirstDraft.Tests
         public void PlayerTakeDamage_NegativeDamage_DoesNotChangeCurrentHP()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             int hpBefore = player.CurrentHP;
@@ -283,7 +296,7 @@ namespace FirstDraft.Tests
         public void PlayerTakeDamage_DefenseFormula_CorrectDamageTaken()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             
@@ -299,24 +312,23 @@ namespace FirstDraft.Tests
         public void PlayerHealHP_Heal_CorrectAmount()
         {
             // Arrange
-            // HP: 20
-            Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Freya", playerStats);
+            Monster bat = MonsterFactory.CreateMonster(1);
 
             // Act
-            bat.TakeDamage(10, player);
-            bat.HealHP(5);
+            player.TakeDamage(10, bat);
+            player.HealHP(5);
 
             // Assert
-            Assert.Equal(144, bat.CurrentHP);
+            Assert.Equal(296, player.CurrentHP);
         }
 
         [Fact]
         public void Player_CreateInstance_CurrentHPMatchesMaxHP()
         {
             // Arrange + Act
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
 
             // Assert
@@ -329,7 +341,7 @@ namespace FirstDraft.Tests
         public void PlayerHealHP_HealMoreThanMaxHP_CurrentHPMatchesMaxHP()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
 
@@ -347,7 +359,7 @@ namespace FirstDraft.Tests
         public void PlayerLevelUp_MaxHP_Increase()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             player.TakeDamage(50, bat); // [finalDamage] = [41]
@@ -362,11 +374,12 @@ namespace FirstDraft.Tests
             Assert.Equal(259, player.CurrentHP); // [300] - [41]
 
         }
+
         [Fact]
         public void PlayerLevelUp_MaxHPIncreasesBeyond9999_MaxHPStopsAt9999()
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             
             // Act
@@ -379,7 +392,7 @@ namespace FirstDraft.Tests
         {
             // Arrange
             Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Freya", playerStats);
 
             player.TakeDamage(13, bat);
@@ -395,7 +408,7 @@ namespace FirstDraft.Tests
         public void PlayerHealHP_NegativeHeal_DoesNotChangeCurrentHP() 
         {
             // Arrange
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             int hpBefore = player.CurrentHP;
 
@@ -412,7 +425,7 @@ namespace FirstDraft.Tests
         public void Player_InstantiateWithCustomMaxHP_InstanceHasCustomMaxHP()
         {
             // Arrange + Act
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats, 200);
             
             // Assert

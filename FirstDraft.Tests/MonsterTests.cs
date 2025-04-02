@@ -46,7 +46,7 @@ namespace FirstDraft.Tests
         {
             // Arrange
             Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Freya", playerStats);
             
             // Act
@@ -61,7 +61,7 @@ namespace FirstDraft.Tests
         {
             // Arrange
             Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Zaza", playerStats);
             
             // Act
@@ -77,7 +77,7 @@ namespace FirstDraft.Tests
         {
             // Arrange
             Monster bat = MonsterFactory.CreateMonster(1); 
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Zaza", playerStats);
 
             // Act
@@ -95,7 +95,7 @@ namespace FirstDraft.Tests
             // Arrange
             // Starts with 20 HP
             Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Zaza", playerStats);
 
             // Act
@@ -115,15 +115,15 @@ namespace FirstDraft.Tests
             // Arrange
             // HP: 20
             Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Zaza", playerStats);
 
             // Act
-            bat.TakeDamage(10, player);
+            bat.TakeDamage(100, player);
             bat.HealHP(5);
 
             // Assert
-            Assert.Equal(144, bat.CurrentHP);
+            Assert.Equal(57, bat.CurrentHP);
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace FirstDraft.Tests
         {
             // Arrange
             Monster wolf = MonsterFactory.CreateMonster(2);
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new ("Zaza", playerStats);
             
             // Act
@@ -160,7 +160,7 @@ namespace FirstDraft.Tests
        {
            // Arrange
            Monster wolf = MonsterFactory.CreateMonster(2);
-           Stats playerStats = new(29, 52);
+           Stats playerStats = new(29, 52, 35);
            Player player = new ("Zaza", playerStats);
            
            // Act
@@ -175,7 +175,7 @@ namespace FirstDraft.Tests
       {
           // Arrange
           Monster bat = MonsterFactory.CreateMonster(1);
-          Stats playerStats = new(29, 52);
+          Stats playerStats = new(29, 52, 35);
           Player player = new ("Zaza", playerStats);
 
           bat.TakeDamage(15, player);
@@ -206,7 +206,7 @@ namespace FirstDraft.Tests
       {
           // Arrange
           Monster bat = MonsterFactory.CreateMonster(1);
-          Stats playerStats = new(29, 52);
+          Stats playerStats = new(29, 52, 35);
           Player player = new ("Zaza", playerStats);
 
           bat.TakeDamage(10, player);
@@ -224,7 +224,7 @@ namespace FirstDraft.Tests
         {
             // Arrange
             Monster wolf = MonsterFactory.CreateMonster(2);
-            Stats playerStats = new(29, 52);
+            Stats playerStats = new(29, 52, 35);
             Player player = new("Zaza", playerStats);
              
             // Act
