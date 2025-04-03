@@ -144,8 +144,15 @@ namespace FirstDraft
         public (int HealAmount, string Message) HealHP()
         {
             // Spell Power: 10
-            MagicList cure = new(); 
-            int healAmount = cure.Cure * 4 + (Level * BaseStats.Magic * 10 / 32); // (40) + (10.9) = 50.9
+            MagicList castMagic = new(); 
+            double baseHealing = castMagic.Cure * 4;
+            double scalingHealing = Level * BaseStats.Magic * 10.0 / 32;
+            
+            // (10 * 4) = 40
+            // (1 * 35 * 10.0 / 32) = 10.9
+            // (40) + (10.9) = 50.9 = 51
+            int healAmount = (int)Math.Round(baseHealing + scalingHealing); 
+
 
             if (healAmount < 0)
             {
