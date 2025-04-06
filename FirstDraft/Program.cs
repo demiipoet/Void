@@ -7,11 +7,34 @@ using System.IO;
 namespace FirstDraft
 {
     /* ~~~~~~~~~~~~ Magic ~~~~~~~~~~~~ */
-    public class MagicList()
+    public enum SpellType { Heal, Damage, Buff, Debuff }
+
+    // Dunno if we'll need to change this to a traditional constructor
+    // Maybe not if there's no logic here
+    public class Spell(string name, SpellType type, int power, int mpcost)
     {
-        public int Cure { get; private set; } = 10;
+        public string Name { get; } = name;
+        public SpellType Type { get; } = type;
+        public int Power { get; } = power;
+        public int MPCost { get; } = mpcost;
     }
 
+    public static class ListOfMagic
+    {
+        public static readonly Spell Cure = new("Cure", SpellType.Heal, 10, 5);
+        public static readonly Spell Fire = new("Fire", SpellType.Heal, 12, 4);
+        public static readonly Spell Protect = new("Protect", SpellType.Heal, 0, 6);
+        public static readonly Spell Slow = new("Slow", SpellType.Heal, 0, 7);
+
+        public static readonly Dictionary<string, Spell> AllSpells = new()
+        {
+            { Cure.Name, Cure },
+            { Fire.Name, Fire },
+            { Protect.Name, Protect},
+            { Slow.Name, Slow}
+        };
+    }
+    
     /* ~~~~~~~~~~~~ Stats ~~~~~~~~~~~~ */
     public class Stats(int strength, int defense, int magic)
     {
@@ -39,15 +62,47 @@ namespace FirstDraft
     }
 
     /* ~~~~~~~~~~~~ Player ~~~~~~~~~~~~ */
-    public class Player(string name, Stats baseStats, int maxHP = 300)
+    /* Converting to traditional constructor */
+    // public class Player(string name, Stats baseStats, int maxHP = 300)
+    public class Player
     {
-        public string? Name { get; } = $"[Player] {name}";
-        public int Level { get; private set; } = 1;
-        public int MaxHP { get; private set; } = maxHP;
-        public int CurrentHP { get; private set; } = maxHP;
-        public Stats BaseStats { get; private set; } = baseStats;
-        public int Experience { get; private set; } = 0;
+        public string? Name { get; }
+        public int Level { get; private set; }
+        public int MaxHP { get; private set; }
+        public int CurrentHP { get; private set; }
+        public Stats BaseStats { get; private set; }
+        public int Experience { get; private set; }
+        public List<Spell> KnownSpells { get; } = new() { ListOfMagic.Cure };
         private int ExpThreshold => Level * 10;
+
+        public Player(string name, Stats baseStats, int maxHP = 300)
+        {
+            Name = name;
+            Level = 1;
+            MaxHP = maxHP;
+            CurrentHP = maxHP;
+            BaseStats = baseStats;
+            Experience = 0;
+        }
+
+        // public string? Name { get; } = $"[Player] {name}";
+        // public int Level { get; private set; } = 1;
+        // public int MaxHP { get; private set; } = maxHP;
+        // public int CurrentHP { get; private set; } = maxHP;
+        // public Stats BaseStats { get; private set; } = baseStats;
+        // public int Experience { get; private set; } = 0;
+        // public List<Spell> KnownSpells { get; } = new();
+        // private int ExpThreshold => Level * 10;
+        
+        // public string? Name { get; } = $"[Player] {name}";
+        // public int Level { get; private set; } = 1;
+        // public int MaxHP { get; private set; } = maxHP;
+        // public int CurrentHP { get; private set; } = maxHP;
+        // public Stats BaseStats { get; private set; } = baseStats;
+        // public int Experience { get; private set; } = 0;
+        // public List<Spell> KnownSpells { get; } = new();
+        // private int ExpThreshold => Level * 10;
+
 
         public string ExpUp(int exp)
         {
@@ -120,53 +175,33 @@ namespace FirstDraft
             return (finalDamage, message);
         }
 
-        /*
-        public (int HealAmount, string Message) HealHP(int amount)
-        {
-            if (amount < 0)
-            {
-                return (0, $"(Error) {Name} cannot heal a negative amount! ({amount})");
-            }
-
-
-            int finalHealAmount = Math.Min(9999, amount);
-            CurrentHP = Math.Min(CurrentHP + amount, MaxHP);
-
-            string message =
-            $"\n{Name} heals {amount} HP!\n" +
-            $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
-
-            // Console.WriteLine($"{Name} healed {amount} HP. HP: {CurrentHP}/{MaxHP}");
-
-            return (amount, message);
-        }
-        */
-        public (int HealAmount, string Message) HealHP()
-        {
-            // Spell Power: 10
-            MagicList castMagic = new(); 
-            double baseHealing = castMagic.Cure * 4;
-            double scalingHealing = Level * BaseStats.Magic * 10.0 / 32;
+        // public (int HealAmount, string Message) HealHP()
+        // {
+        //     // Spell Power: 10
+        //     MagicList castMagic = new(); 
+        //     double baseHealing = castMagic.Cure * 4;
+        //     double scalingHealing = Level * BaseStats.Magic * 10.0 / 32;
             
-            // (10 * 4) = 40
-            // (1 * 35 * 10.0 / 32) = 10.9
-            // (40) + (10.9) = 50.9 = 51
-            int healAmount = (int)Math.Round(baseHealing + scalingHealing); 
+        //     // (10 * 4) = 40
+        //     // (1 * 35 * 10.0 / 32) = 10.9
+        //     // (40) + (10.9) = 50.9 = 51
+        //     int healAmount = (int)Math.Round(baseHealing + scalingHealing); 
 
 
-            if (healAmount < 0)
-            {
-                return (0, $"(Error) {Name} cannot heal a negative amount! ({healAmount})");
-            }
+        //     /* Can probably replace with [healAmount = Math.Max(0, healAmount)] */
+        //     if (healAmount < 0)
+        //     {
+        //         return (0, $"(Error) {Name} cannot heal a negative amount! ({healAmount})");
+        //     }
 
-            CurrentHP = Math.Min(CurrentHP + healAmount, MaxHP);
+        //     CurrentHP = Math.Min(CurrentHP + healAmount, MaxHP);
 
-            string message =
-                $"\n{Name} heals {healAmount} HP!\n" +
-                $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
+        //     string message =
+        //         $"\n{Name} heals {healAmount} HP!\n" +
+        //         $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
 
-            return (healAmount, message);
-        }
+        //     return (healAmount, message);
+        // }
 
         public string KillMonster(Monster monster)
         {
@@ -343,8 +378,8 @@ namespace FirstDraft
                     }
                     else if (processedBattleChoice == "H")
                     {
-                        var (_, healMessage) = player.HealHP();
-                        Log(healMessage);
+                        // var (_, healMessage) = player.HealHP();
+                        // Log(healMessage);
                     }
 
                     /* ~~~~ Monster Attacks ~~~~ */
