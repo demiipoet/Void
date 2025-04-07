@@ -11,15 +11,15 @@ namespace FirstDraft
 
     // Dunno if we'll need to change this to a traditional constructor
     // Maybe not if there's no logic here
-    public class Spell(string name, SpellType type, int power, int mpcost)
+    public class Spell(string name, SpellType type, int power, int mpCost)
     {
         public string Name { get; } = name;
         public SpellType Type { get; } = type;
         public int Power { get; } = power;
-        public int MPCost { get; } = mpcost;
+        public int MPCost { get; } = mpCost;
     }
 
-    public static class ListOfMagic
+    public static class SpellBook
     {
         public static readonly Spell Cure = new("Cure", SpellType.Heal, 10, 5);
         public static readonly Spell Fire = new("Fire", SpellType.Heal, 12, 4);
@@ -72,7 +72,7 @@ namespace FirstDraft
         public int CurrentHP { get; private set; }
         public Stats BaseStats { get; private set; }
         public int Experience { get; private set; }
-        public List<Spell> KnownSpells { get; } = new() { ListOfMagic.Cure };
+        public List<Spell> KnownSpells { get; } = [];
         private int ExpThreshold => Level * 10;
 
         public Player(string name, Stats baseStats, int maxHP = 300)
@@ -83,26 +83,36 @@ namespace FirstDraft
             CurrentHP = maxHP;
             BaseStats = baseStats;
             Experience = 0;
+
+            // Every player begins with [Cure]
+            KnownSpells.Add(SpellBook.Cure);
         }
 
-        // public string? Name { get; } = $"[Player] {name}";
-        // public int Level { get; private set; } = 1;
-        // public int MaxHP { get; private set; } = maxHP;
-        // public int CurrentHP { get; private set; } = maxHP;
-        // public Stats BaseStats { get; private set; } = baseStats;
-        // public int Experience { get; private set; } = 0;
-        // public List<Spell> KnownSpells { get; } = new();
-        // private int ExpThreshold => Level * 10;
-        
-        // public string? Name { get; } = $"[Player] {name}";
-        // public int Level { get; private set; } = 1;
-        // public int MaxHP { get; private set; } = maxHP;
-        // public int CurrentHP { get; private set; } = maxHP;
-        // public Stats BaseStats { get; private set; } = baseStats;
-        // public int Experience { get; private set; } = 0;
-        // public List<Spell> KnownSpells { get; } = new();
-        // private int ExpThreshold => Level * 10;
+        public (int EffectValue, string Message) CastSpell(string spellName)
+        {
+            var spell = KnownSpells.FirstOrDefault(s => s.Name == spellName);
+            if (spell == null)
+                return (0, $"(Error) {Name} does not know the spell '{spellName}'.");
 
+            switch (spell.Type)
+            {
+                case SpellType.Heal:
+                    double baseHealing = spell.Power * 4;
+                    double scalingHealing = Level * BaseStats.Magic * 10.0 / 32;
+                    int healAmount = (int)Math.Round(baseHealing + scalingHealing);
+                    healAmount = Math.Max(0, healAmount);
+                    CurrentHP = Math.Min(CurrentHP + healAmount, MaxHP);
+                    return (healAmount, $"{Name} casts {spell.Name} and heals {healAmount} HP!");
+
+                case SpellType.Damage:
+                    /* ~~~~ Update formula ~~~~ */
+                    int baseDamage = (int)Math.Round(spell.Power * (BaseStats.Magic / 10.0));
+                    return (baseDamage, $"{Name} casts {spell.Name} and deals {baseDamage} damage!");
+
+                default:
+                    return (0, $"(Error) Spell type not implemented.");
+            }
+        }
 
         public string ExpUp(int exp)
         {
