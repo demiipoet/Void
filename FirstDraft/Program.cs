@@ -34,7 +34,7 @@ namespace FirstDraft
             { Slow.Name, Slow}
         };
     }
-    
+
     /* ~~~~~~~~~~~~ Stats ~~~~~~~~~~~~ */
     public class Stats(int strength, int defense, int magic)
     {
@@ -43,7 +43,7 @@ namespace FirstDraft
         Bat: 5
         Wolf: 6
         */
-        public int Strength { get; set; } = strength; 
+        public int Strength { get; set; } = strength;
 
         /*
         Player: 52
@@ -77,7 +77,7 @@ namespace FirstDraft
 
         public Player(string name, Stats baseStats, int maxHP = 300)
         {
-            Name = name;
+            Name = $"[Player] {name}";
             Level = 1;
             MaxHP = maxHP;
             CurrentHP = maxHP;
@@ -88,10 +88,10 @@ namespace FirstDraft
             KnownSpells.Add(SpellBook.Cure);
         }
 
-        public (int EffectValue, string Message) CastSpell(string spellName)
+        public (int EffectValue, string Message) CastSpell(string spellName, Monster monster)
         {
             var spell = KnownSpells.FirstOrDefault(s => s.Name == spellName);
-            if (spell == null)
+           if (spell == null)
                 return (0, $"(Error) {Name} does not know the spell '{spellName}'.");
 
             switch (spell.Type)
@@ -99,10 +99,16 @@ namespace FirstDraft
                 case SpellType.Heal:
                     double baseHealing = spell.Power * 4;
                     double scalingHealing = Level * BaseStats.Magic * 10.0 / 32;
-                    int healAmount = (int)Math.Round(baseHealing + scalingHealing);
-                    healAmount = Math.Max(0, healAmount);
-                    CurrentHP = Math.Min(CurrentHP + healAmount, MaxHP);
-                    return (healAmount, $"{Name} casts {spell.Name} and heals {healAmount} HP!");
+                    int finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
+                    finalHealAmount = Math.Max(0, finalHealAmount);
+                    CurrentHP = Math.Min(CurrentHP + finalHealAmount, MaxHP);
+
+                    string message =
+                        $"\n{Name} casts {spell.Name} and heals {finalHealAmount} HP!\n" +
+                        $"{Name}'s HP: {CurrentHP}/{MaxHP}\n" +
+                        $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
+
+                    return (finalHealAmount, message);
 
                 case SpellType.Damage:
                     /* ~~~~ Update formula ~~~~ */
@@ -120,13 +126,12 @@ namespace FirstDraft
             {
                 return $"(Error) {Name} cannot receive negative EXP! ({exp})";
             }
-            
+
             string logMessage = $"\n{Name} gained {exp} EXP!\n";
             int prevExp;
             Experience += exp;
             logMessage += $"Current EXP: {Experience}\n";
-            
-            // Update threshold after level up
+
             while (Experience >= ExpThreshold)
             {
                 prevExp = Experience;
@@ -154,17 +159,16 @@ namespace FirstDraft
 
             int prevDefense = BaseStats.Defense;
             BaseStats.Defense += 10;
-            BaseStats.Defense= Math.Min(999, BaseStats.Defense);
+            BaseStats.Defense = Math.Min(999, BaseStats.Defense);
 
-            /* ~~~~~~~~ Written for debugging purposes ~~~~~~~~ */
             return
-            $"{Name} leveled up!\n" + 
+            $"{Name} leveled up!\n" +
             $"Previous Level: {prevLevel}, New Level: {Level}\n" +
-            $"Previous Max HP: {prevMaxHP}, New Max HP: {MaxHP}\n" + 
+            $"Previous Max HP: {prevMaxHP}, New Max HP: {MaxHP}\n" +
             $"Previous Strength: {prevStrength}, New Strength: {BaseStats.Strength}\n" +
             $"Previous Defense: {prevDefense}, New Defense: {BaseStats.Defense}\n\n";
         }
-        
+
         public (int FinalDamage, string Message) TakeDamage(double incomingDamage, Monster monster)
         {
             if (incomingDamage < 0)
@@ -179,39 +183,11 @@ namespace FirstDraft
 
             string message =
             $"{monster.Name} attacks {Name} for {finalDamage} damage!\n" +
-            $"{Name}'s HP: {CurrentHP}/{MaxHP}\n" + 
+            $"{Name}'s HP: {CurrentHP}/{MaxHP}\n" +
             $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}";
 
             return (finalDamage, message);
         }
-
-        // public (int HealAmount, string Message) HealHP()
-        // {
-        //     // Spell Power: 10
-        //     MagicList castMagic = new(); 
-        //     double baseHealing = castMagic.Cure * 4;
-        //     double scalingHealing = Level * BaseStats.Magic * 10.0 / 32;
-            
-        //     // (10 * 4) = 40
-        //     // (1 * 35 * 10.0 / 32) = 10.9
-        //     // (40) + (10.9) = 50.9 = 51
-        //     int healAmount = (int)Math.Round(baseHealing + scalingHealing); 
-
-
-        //     /* Can probably replace with [healAmount = Math.Max(0, healAmount)] */
-        //     if (healAmount < 0)
-        //     {
-        //         return (0, $"(Error) {Name} cannot heal a negative amount! ({healAmount})");
-        //     }
-
-        //     CurrentHP = Math.Min(CurrentHP + healAmount, MaxHP);
-
-        //     string message =
-        //         $"\n{Name} heals {healAmount} HP!\n" +
-        //         $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
-
-        //     return (healAmount, message);
-        // }
 
         public string KillMonster(Monster monster)
         {
@@ -228,7 +204,7 @@ namespace FirstDraft
         public int MaxHP { get; } = maxHP;
         public int CurrentHP { get; private set; } = maxHP;
         public int ExpGiven { get; } = expGiven;
-        public Stats BaseStats {get; private set; } = baseStats;
+        public Stats BaseStats { get; private set; } = baseStats;
 
         public (int FinalDamage, string Message) TakeDamage(int incomingDamage, Player player)
         {
@@ -251,30 +227,10 @@ namespace FirstDraft
 
             return (finalDamage, message);
         }
-
-        public void HealHP(int amount)
-        {
-            if (amount < 0)
-            {
-                Console.WriteLine($"(Error) {Name} cannot heal by a negative amount!({amount})");
-                return;
-            }
-
-            int prevHP = CurrentHP;
-            // amount = Math.Min(9999, MaxHP);
-            amount = Math.Min(amount, MaxHP);
-            CurrentHP = Math.Min(CurrentHP + amount, MaxHP);
-            
-            // Console.WriteLine($"{Name} healed {amount} HP. HP: {CurrentHP}/{MaxHP}");
-
-            /* ~~~~~~~~ Written for debugging purposes ~~~~~~~~ */
-            Console.WriteLine($"{Name} healed {amount} HP.");
-            Console.WriteLine($"Previous HP: {prevHP}, New HP: {CurrentHP}");
-        }
     }
 
     /* ~~~~~~~~~~~~ Monster Factory ~~~~~~~~~~~~ */
-    public static class  MonsterFactory
+    public static class MonsterFactory
     {
         public static Monster CreateMonster(int monsterID) =>
         monsterID switch
@@ -336,8 +292,7 @@ namespace FirstDraft
             combatLog.Add(message);
             Console.WriteLine(message);
         }
-        
-        /*
+
         public static void ShowCombatLog()
         {
             Console.WriteLine("\n======== Start Combat Log ========");
@@ -347,7 +302,6 @@ namespace FirstDraft
             }
            Console.WriteLine("======== End Combat Log ========\n"); 
         }
-        */
 
         public static void Battle(Player player, Monster monster)
         {
@@ -367,7 +321,7 @@ namespace FirstDraft
                     /* ~~~~ Player Attacks ~~~~ */
                     Log($"\n--- Turn {turnNumber} ---");
                     string? processedBattleChoice = GetPlayerChoice();
-                    
+
                     if (processedBattleChoice == "A")
                     {
                         int playerDamageDealt = rng.Next(3, 8) + player.BaseStats.Strength;
@@ -384,17 +338,22 @@ namespace FirstDraft
                     }
                     else if (processedBattleChoice == "D")
                     {
-                        Log($"\n{player.Name} defends!\n");
+                        string message = 
+                            $"\n{player.Name} defends!\n" +
+                            $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
+                            $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
+
+                        Log(message);
                     }
                     else if (processedBattleChoice == "H")
                     {
-                        // var (_, healMessage) = player.HealHP();
-                        // Log(healMessage);
+                        var (_, healMessage) = player.CastSpell("Cure", monster);
+                        Log(healMessage);
                     }
 
                     /* ~~~~ Monster Attacks ~~~~ */
                     int monsterDamageDealt;
-                    
+
                     if (processedBattleChoice == "D")
                     {
                         monsterDamageDealt = rng.Next(3, 9) + monster.BaseStats.Strength;
@@ -433,11 +392,12 @@ namespace FirstDraft
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             Monster wolf = MonsterFactory.CreateMonster(2);
+            
 
             Game.Battle(player, bat);
             // Game.ShowCombatLog();
 
-            string logName = Game.GenerateLogFilename(bat.Name ?? "");
+            string logName = Game.GenerateLogFilename("Bat");
             Game.SaveCombatLog(logName);
 
         }
