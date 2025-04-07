@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Security;
 using System.IO;
+using System.Collections;
 
 namespace FirstDraft
 {
@@ -271,16 +272,13 @@ namespace FirstDraft
             do
             {
                 Console.WriteLine("Attack (A), Defend (D), or Heal (H)? ");
-                // Console.WriteLine("Attack (A) or Defend (D)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
                 if (choice != "A" && choice != "D" && choice != "H")
-                // if (choice != "A" && choice != "D")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
             } while (choice != "A" && choice != "D" && choice != "H");
-            // } while (choice != "A" && choice != "D");
 
             return choice;
         }
@@ -303,6 +301,35 @@ namespace FirstDraft
            Console.WriteLine("======== End Combat Log ========\n"); 
         }
 
+        private static bool MonsterAttack(Player player, Monster monster, string playerChoice, Random rng)
+        {
+            bool isPlayerAlive = true;
+            int monsterDamageDealt = rng.Next(3, 9) + monster.BaseStats.Strength;
+
+            /* case processedBattleChoice { case "D": {...}; case "A": {...}} */
+            if (playerChoice == "D")
+            {
+                double reducedDamage = monsterDamageDealt / 2;
+                var (_, damageMessage) = player.TakeDamage(reducedDamage, monster);
+
+                Log(damageMessage);
+            }
+            else
+            {
+                var (_, damageMessage) = player.TakeDamage(monsterDamageDealt, monster);
+
+                Log(damageMessage);
+            }
+
+            if (player.CurrentHP <= 0)
+            {
+                Log($"\n{player.Name} has been defeated!\n");
+                isPlayerAlive = false;
+            }
+
+            return isPlayerAlive;
+        }
+
         public static void Battle(Player player, Monster monster)
         {
             int turnNumber = 1;
@@ -321,58 +348,45 @@ namespace FirstDraft
                     /* ~~~~ Player Attacks ~~~~ */
                     Log($"\n--- Turn {turnNumber} ---");
                     string? processedBattleChoice = GetPlayerChoice();
-
-                    if (processedBattleChoice == "A")
+                    
+                    switch (processedBattleChoice)
                     {
-                        int playerDamageDealt = rng.Next(3, 8) + player.BaseStats.Strength;
+                        case "A":
+                            int playerDamageDealt = rng.Next(3, 8) + player.BaseStats.Strength;
+                            var (_, damageMessage) = monster.TakeDamage(playerDamageDealt, player);
+                            Log(damageMessage);
 
-                        var (_, damageMessage) = monster.TakeDamage(playerDamageDealt, player);
-                        Log(damageMessage);
-
-                        if (monster.CurrentHP <= 0)
-                        {
-                            string killMonsterMessage = player.KillMonster(monster);
-                            Log(killMonsterMessage);
+                            if (monster.CurrentHP <= 0)
+                            {
+                                string killMonsterMessage = player.KillMonster(monster);
+                                Log(killMonsterMessage);
+                                continue;
+                            }
                             break;
-                        }
-                    }
-                    else if (processedBattleChoice == "D")
-                    {
-                        string message = 
-                            $"\n{player.Name} defends!\n" +
-                            $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
-                            $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
 
-                        Log(message);
-                    }
-                    else if (processedBattleChoice == "H")
-                    {
-                        var (_, healMessage) = player.CastSpell("Cure", monster);
-                        Log(healMessage);
+                        case "D":
+                            string message = 
+                                $"\n{player.Name} defends!\n" +
+                                $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
+                                $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
+
+                            Log(message);
+                            break;
+
+                        case "H":
+                            var (_, healMessage) = player.CastSpell("Cure", monster);
+                            Log(healMessage);
+                            break;
+                            
+                        default:
+                            Console.WriteLine("\nInput Error\n");
+                            break;
                     }
 
                     /* ~~~~ Monster Attacks ~~~~ */
-                    int monsterDamageDealt;
-
-                    if (processedBattleChoice == "D")
+                    if (monster.CurrentHP > 0)
                     {
-                        monsterDamageDealt = rng.Next(3, 9) + monster.BaseStats.Strength;
-                        double reducedDamage = monsterDamageDealt / 2;
-                        var (_, damageMessage) = player.TakeDamage(reducedDamage, monster);
-
-                        Log(damageMessage);
-                    }
-                    else
-                    {
-                        monsterDamageDealt = rng.Next(3, 9) + monster.BaseStats.Strength;
-                        var (_, damageMessage) = player.TakeDamage(monsterDamageDealt, monster);
-
-                        Log(damageMessage);
-                    }
-
-                    if (player.CurrentHP <= 0)
-                    {
-                        Log($"{player.Name} has been defeated!");
+                        MonsterAttack(player, monster, processedBattleChoice, rng);
                     }
 
                     turnNumber++;
