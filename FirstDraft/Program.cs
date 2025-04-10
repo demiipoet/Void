@@ -7,6 +7,15 @@ using System.Collections;
 
 namespace FirstDraft
 {
+    /*
+    int strengthStat = 29;
+    int defenseStat = 52;
+    int magicStat = 35;
+    Stats playerStats = new(strengthStat, defenseStat, magicStat);
+    Player player = new ("Freya", playerStats);
+
+   */ 
+
     /* ~~~~~~~~~~~~ Magic ~~~~~~~~~~~~ */
     public enum SpellType { Heal, Damage, Buff, Debuff }
 
@@ -23,9 +32,9 @@ namespace FirstDraft
     public static class SpellBook
     {
         public static readonly Spell Cure = new("Cure", SpellType.Heal, 10, 5);
-        public static readonly Spell Fire = new("Fire", SpellType.Heal, 12, 4);
-        public static readonly Spell Protect = new("Protect", SpellType.Heal, 0, 6);
-        public static readonly Spell Slow = new("Slow", SpellType.Heal, 0, 7);
+        public static readonly Spell Fire = new("Fire", SpellType.Damage, 12, 4);
+        public static readonly Spell Protect = new("Protect", SpellType.Buff, 0, 6);
+        public static readonly Spell Slow = new("Slow", SpellType.Debuff, 0, 7);
 
         public static readonly Dictionary<string, Spell> AllSpells = new()
         {
@@ -92,7 +101,7 @@ namespace FirstDraft
         public (int EffectValue, string Message) CastSpell(string spellName, Monster monster)
         {
             var spell = KnownSpells.FirstOrDefault(s => s.Name == spellName);
-           if (spell == null)
+            if (spell == null)
                 return (0, $"(Error) {Name} does not know the spell '{spellName}'.");
 
             switch (spell.Type)
@@ -306,7 +315,7 @@ namespace FirstDraft
             bool isPlayerAlive = true;
             int monsterDamageDealt = rng.Next(3, 9) + monster.BaseStats.Strength;
 
-            /* case processedBattleChoice { case "D": {...}; case "A": {...}} */
+            /* switch processedBattleChoice { case "D": {...}; case "A": {...}} */
             if (playerChoice == "D")
             {
                 double reducedDamage = monsterDamageDealt / 2;
