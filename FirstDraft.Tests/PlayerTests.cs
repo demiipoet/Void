@@ -72,123 +72,175 @@ namespace FirstDraft.Tests
             Assert.Equal(newExp, player.Experience);
         }
 
-        // In progress
+        // DONE
         [Fact]
         public void PlayerExpUp_GainEnoughExpToLevelUpMultipleTimes_LevelsUpMultipleTimes()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int testExp = 65;
+            int expectedExp = 5;
+            int expectedLevel = 4;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
 
             // Act
             // If math is correct, should level up 3 times with [5] [Experience] leftover
-            player.ExpUp(65);
+            player.ExpUp(testExp);
 
             // Assert
-            Assert.Equal(5, player.Experience);
-            Assert.Equal(4, player.Level); 
+            Assert.Equal(expectedExp, player.Experience);
+            Assert.Equal(expectedLevel, player.Level); 
         }
 
+        // DONE
         [Fact]
         public void PlayerExpUp_GainMultipleLevels_CurrentHPRemainsTheSame()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingExp = 65; 
+            int expectedLevel = 4;
+            int expectedMaxHP = 450;
+            int expectedCurrentHP = 300;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
 
             // Act
-            player.ExpUp(65);
+            player.ExpUp(incomingExp);
             
             // Assert
-            Assert.Equal(4, player.Level);
-            Assert.Equal(450, player.MaxHP);
-            Assert.Equal(300, player.CurrentHP);
+            Assert.Equal(expectedLevel, player.Level);
+            Assert.Equal(expectedMaxHP, player.MaxHP);
+            Assert.Equal(expectedCurrentHP, player.CurrentHP);
         }
 
+        // DONE
         [Fact]
         public void PlayerExpUp_GainExactAmountOfExpToLevelUp_LevelIncreaseByOne()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingExp = 10;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
             int initialLevel = player.Level;
 
             // Act
             // Should trigger ding at Level 50 (ding = [Level] * 10)
-            player.ExpUp(10);
+            player.ExpUp(incomingExp);
 
             // Assert
             Assert.Equal(initialLevel + 1, player.Level);
         }
 
+        // DONE
         [Fact]
         public void PlayerExpUp_NegativeExp_ExperienceDoesNotChange()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int negativeExp = -9;
+            int expectedExp = 0;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
 
             // Act
-            player.ExpUp(-9);
+            player.ExpUp(negativeExp);
 
             // Assert
-            Assert.Equal(0, player.Experience);
+            Assert.Equal(expectedExp, player.Experience);
         }
 
+        // DONE
         [Fact]
         public void PlayerExpUp_ZeroExpGained_ExperienceDoesNotChange()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int zeroExp= 0;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
             int initialLevel = player.Level;
 
             // Act
-            player.ExpUp(0);
+            player.ExpUp(zeroExp);
 
             // Assert
             Assert.Equal(initialLevel, player.Level);
         }
         
+        // DONE
         [Fact]
         public void PlayerExpUp_MonsterKilled_CorrectExpGained()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int wolfMonsterID = 2;
+            int wolfExp = 7;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
-            Monster wolf = MonsterFactory.CreateMonster(2);
+            Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
 
             // Act
             player.KillMonster(wolf);
 
             // Assert
-            Assert.Equal(7, player.Experience);
+            Assert.Equal(wolfExp, player.Experience);
         }
 
+        // DONE
         [Fact]
         public void PlayerExpUp_KillMonsterWithEnoughExpToLevelUp_LevelUp()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int wolfHealth = 150;
+            int wolfExp = 10;
+            int wolfStrength = 6;
+            int wolfDefense = 7;
+            int wolfMagic = 8;
+            int expectedPlayerLevel = 2;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
+
             // Enough to level up from 1 to 2 with 5 leftover
-            Monster wolf = new("Wolf", 30, 15, new Stats(3, 3, 8));
+            Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagic));
             
             // Act
             player.KillMonster(wolf);
             
             // Assert
-            Assert.Equal(2, player.Level);
-            Assert.Equal(5, player.Experience);
+            Assert.Equal(expectedPlayerLevel, player.Level);
         }
 
+        // DONE
         [Fact]
         public void PlayerExpUp_KillMultipleMonsters_GainMultipleLevels()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            int expectedPlayerLevel = 3;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Act
             player.KillMonster(bat); // Level 1 (0 > 5 EXP)
@@ -199,198 +251,290 @@ namespace FirstDraft.Tests
             player.KillMonster(bat); // Level 3 (15 > 20 EXP)
 
             // Assert
-            Assert.Equal(3, player.Level);
+            Assert.Equal(expectedPlayerLevel, player.Level);
 
         }
         
         /* ~~~~~~~~~~~ Stats ~~~~~~~~~~~ */
         
+        // DONE
         [Fact]
         public void Player_InstanceCreated_InitializedStatsAreCorrect()
         {
             // Arrange + Act
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Zazu", playerStats);
             
             // Assert
-            Assert.Equal(29, playerStats.Strength);
-            Assert.Equal(52, playerStats.Defense);
+            Assert.Equal(strengthStat, playerStats.Strength);
+            Assert.Equal(defenseStat, playerStats.Defense);
+            Assert.Equal(magicStat, playerStats.Magic);
         }
 
+        // DONE
         [Fact]
         public void PlayerExplUp_LevelUp_BaseStatsIncreaseAppropriately()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingExp = 10;
+            int newStrength = 39;
+            int newDefense = 62;
+            int newMagic = 45;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new ("Freya", playerStats);
             
             // Act
-            player.ExpUp(15);
+            player.ExpUp(incomingExp);
             
             // Assert
-            Assert.Equal(39, playerStats.Strength);
-            Assert.Equal(62, playerStats.Defense);
+            Assert.Equal(newStrength, playerStats.Strength);
+            Assert.Equal(newDefense, playerStats.Defense);
+            Assert.Equal(newMagic, playerStats.Magic);
         }
 
         /* ~~~~~~~~~~~ Damage ~~~~~~~~~~~ */
+        // DONE 
         [Fact]
         public void PlayerTakeDamage_Over9999_DamageStopsAt9999()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            int maxHP = 9999;
+            int overkill = 999999;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new ("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
             
             // Act
-            var (finalDamage, _) = player.TakeDamage(999999, bat);
+            var (finalDamage, _) = player.TakeDamage(overkill, bat);
             
             // Assert
-            Assert.Equal(9999, finalDamage);
+            Assert.Equal(maxHP, finalDamage);
         }
 
+        // DONE
         [Fact]
         public void PlayerTakeDamage_PlayerTakeDamage_CorrectAmount()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            int incomingDamage = 99;
+            int remainingHP = 220;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new ("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
             
             // Act
-            player.TakeDamage(99, bat);
+            player.TakeDamage(incomingDamage, bat);
 
             // Assert
             // HP: 300
-            Assert.Equal(220, player.CurrentHP);
+            Assert.Equal(remainingHP, player.CurrentHP);
         }
 
+        // DONE 
         [Fact]
         public void PlayerTakeDamage_TakeMoreDamageThanCurrentHP_CurrentHPDoesNotGoNegative()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            int incomingDamage = 99999;
+            int zeroHP = 0;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Act
             // Take more damage than HP
-            player.TakeDamage(99999, bat);
+            player.TakeDamage(incomingDamage, bat);
 
             // Asssert
             // HP should be 0, not negative
-            Assert.Equal(0, player.CurrentHP);
+            Assert.Equal(zeroHP, player.CurrentHP);
         }
         
+        // DONE 
         [Fact]
         public void PlayerTakeDamage_NegativeDamage_DoesNotChangeCurrentHP()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            int incomingDamage = -9;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
             int hpBefore = player.CurrentHP;
 
             // Act
-            player.TakeDamage(-9, bat);
+            player.TakeDamage(incomingDamage, bat);
 
             // Assert
             Assert.Equal(hpBefore, player.CurrentHP);
 
         }
 
+        // DONE
         [Fact]
         public void PlayerTakeDamage_DefenseFormula_CorrectDamageTaken()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            int incomingDamage = 10;
+            int expectedRemainingHP = 291;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
             
             // Act
-            player.TakeDamage(10, bat);
+            player.TakeDamage(incomingDamage, bat);
             
             // Assert
-            Assert.Equal(291, player.CurrentHP);
+            Assert.Equal(expectedRemainingHP, player.CurrentHP);
         }
 
         /* ~~~~~~~~~~~ HP ~~~~~~~~~~~ */
+        // DONE
         [Fact]
         public void PlayerHealHP_Heal_CorrectAmount()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            int incomingDamage = 125;
+            int expectedRemainingHP = 251;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new ("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Act
-            player.TakeDamage(125, bat);
+            player.TakeDamage(incomingDamage, bat);
             player.CastSpell("Cure", bat);
 
             // Assert
-            Assert.Equal(251, player.CurrentHP);
+            Assert.Equal(expectedRemainingHP, player.CurrentHP);
         }
 
+        // DONE
         [Fact]
         public void Player_CreateInstance_CurrentHPMatchesMaxHP()
         {
             // Arrange + Act
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int expectedCurrentHP = 300;
+            int expectedMaxHP = 300;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
 
             // Assert
             Assert.Equal(player.CurrentHP, player.MaxHP);
-            Assert.Equal(300, player.CurrentHP);
-            Assert.Equal(300, player.MaxHP);
+            Assert.Equal(expectedCurrentHP, player.CurrentHP);
+            Assert.Equal(expectedMaxHP, player.MaxHP);
         }
 
+        // DONE
         [Fact]
         public void PlayerHealHP_HealMoreThanMaxHP_CurrentHPMatchesMaxHP()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 999);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int expectedCurrentHP = 300;
+            int expectedMaxHP = 300;
+            int incomingDamage = 50;
+            int batMonsterID = 1;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Reduce HP first
-            player.TakeDamage(50, bat);
+            player.TakeDamage(incomingDamage, bat);
 
             // Act
             player.CastSpell("Cure", bat);
 
             // Assert
-            Assert.Equal(player.MaxHP, player.CurrentHP);
+            Assert.Equal(expectedCurrentHP, expectedMaxHP);
         }
 
+        // DONE
         [Fact]
         public void PlayerLevelUp_MaxHP_Increase()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int expectedMaxHP = 350;
+            int incomingDamage = 50;
+            int incomingExp = 10; 
+            int expectedLevel = 2;
+            int batMonsterID = 1;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
-            Monster bat = MonsterFactory.CreateMonster(1);
-            player.TakeDamage(50, bat); // [finalDamage] = [41]
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
+            player.TakeDamage(incomingDamage, bat); // [finalDamage] = [41]
 
             // Act
             // Level up player to Lv 2
-            player.ExpUp(10);
+            player.ExpUp(incomingExp);
 
             // Assert
-            Assert.Equal(2, player.Level);
-            Assert.Equal(350, player.MaxHP);
-            Assert.Equal(259, player.CurrentHP); // [300] - [41]
-
+            Assert.Equal(expectedLevel, player.Level);
+            Assert.Equal(expectedMaxHP, player.MaxHP);
         }
 
+        // DONE
         [Fact]
-        public void PlayerLevelUp_MaxHPIncreasesBeyond9999_MaxHPStopsAt9999()
+        public void PlayerLevelUp_CurrentHP_DoesNotChange()
         {
             // Arrange
-            Stats playerStats = new(29, 52, 35);
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int expectedCurrentHP = 259;
+            int expectedMaxHP = 350;
+            int incomingDamage = 50;
+            int incomingExp = 10; 
+            int batMonsterID = 1;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
-            
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
+            player.TakeDamage(incomingDamage, bat); // [finalDamage] = [41]
+
             // Act
-            
+            // Level up player to Lv 2
+            player.ExpUp(incomingExp);
+
             // Assert
+            Assert.Equal(expectedMaxHP, player.MaxHP);
+            Assert.Equal(expectedCurrentHP, player.CurrentHP); // [300] - [41]
+
         }
 
         [Fact]
@@ -403,11 +547,10 @@ namespace FirstDraft.Tests
             int strengthStat = 29;
             int defenseStat = 52;
             int magicStat = 35;
+            int incomingDamage = 63; // Final Damage: 51
             Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new ("Freya", playerStats);
 
-            // int incomingDamage = 63;
-            int incomingDamage = 63; // Final Damage: 51
             player.TakeDamage(incomingDamage, bat);
 
             // Act
