@@ -1,8 +1,8 @@
 using System.Threading.Tasks.Dataflow;
 using FirstDraft;
+using Microsoft.VisualStudio.TestPlatform.Common.Exceptions;
 using Xunit;
 
-// Added the namespace because VSC wanted me to
 namespace FirstDraft.Tests
 {
     public class MonsterTests
@@ -12,28 +12,36 @@ namespace FirstDraft.Tests
         public void MonsterCreateMonster_CreateMonsterInstance_Correctly()
         {
             // Arrange + Act
-            Monster wolf = MonsterFactory.CreateMonster(2);
+            int wolfMonsterID = 2;
+            int expectedMaxHP = 150;
+            int expectedCurrentHP = 150;
+            int expectedExpGiven = 7;
+            Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
             
             // Assert
             Assert.Equal("[Monster] Wolf", wolf.Name);
-            Assert.Equal(150, wolf.MaxHP);
-            Assert.Equal(150, wolf.CurrentHP);
-            Assert.Equal(7, wolf.ExpGiven);
+            Assert.Equal(expectedMaxHP, wolf.MaxHP);
+            Assert.Equal(expectedCurrentHP, wolf.CurrentHP);
+            Assert.Equal(expectedExpGiven, wolf.ExpGiven);
         }
         
         [Fact]
         public void MonsterCreateMonster_DisplayArgumentException_OnInvalidMonsterID()
         {
-            // Arrange + Act + Assert
-            Assert.Throws<ArgumentException>(() => MonsterFactory.CreateMonster(99999));
+            // Arrange
+            int invalidMonsterID = 999;
+            
+            // Act + Assert
+            Assert.Throws<ArgumentException>(() => MonsterFactory.CreateMonster(invalidMonsterID));
         }
 
         [Fact]
         public void MonsterCreateMonster_DisplaysCorrectMessage_OnInvalidMonsterID()
         {
             // Arrange + Act
+            int invalidMonsterID = 999;
             var exception = 
-                Assert.Throws<ArgumentException>(() => MonsterFactory.CreateMonster(99999));
+            Assert.Throws<ArgumentException>(() => MonsterFactory.CreateMonster(invalidMonsterID));
             
             // Assert
             Assert.Equal("Invalid MonsterID", exception.Message);
@@ -45,48 +53,65 @@ namespace FirstDraft.Tests
         public void MonsterTakeDamage_Over9999_DamageStopsAt9999()
         {
             // Arrange
-            Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52, 35);
+            int batMonsterID = 1;
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingDamage = 999999;
+            int maxDamage = 9999;
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
             
             // Act
-            var (finalDamage, _) = bat.TakeDamage(999999, player);
-            
+            var (finalDamage, _) = bat.TakeDamage(incomingDamage, player);
+     
             // Assert
-            Assert.Equal(9999, finalDamage);
+            Assert.Equal(maxDamage, finalDamage);
         }
 
         [Fact]
         public void MonsterTakeDamage_MonsterTakeDamage_CorrectAmount()
         {
             // Arrange
-            Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52, 35);
-            Player player = new ("Zaza", playerStats);
+            int batMonsterID = 1;
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingDamage = 5;
+            int expectedRemainingHP = 144;
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new ("Freya", playerStats);
             
             // Act
-            bat.TakeDamage(5, player);
+            bat.TakeDamage(incomingDamage, player);
 
             // Assert
-            // Expected: 20 - 5 = 15
-            Assert.Equal(144, bat.CurrentHP);
+            Assert.Equal(expectedRemainingHP, bat.CurrentHP);
         }
 
         [Fact]
         public void MonsterTakeDamage_TakingNegativeDamage_DoesNotChangeHP()
         {
             // Arrange
-            Monster bat = MonsterFactory.CreateMonster(1); 
-            Stats playerStats = new(29, 52, 35);
-            Player player = new ("Zaza", playerStats);
+            int batMonsterID = 1;
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingDamage = -5;
+            int expectedRemainingHP = 150;
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new ("Freya", playerStats);
 
             // Act
             // Negative damage should not reduce HP
-            bat.TakeDamage(-5, player);
+            bat.TakeDamage(incomingDamage, player);
 
             // Assert
             // HP should remain unchanged
-            Assert.Equal(150, bat.CurrentHP);
+            Assert.Equal(expectedRemainingHP, bat.CurrentHP);
         }
 
         [Fact]
@@ -94,17 +119,23 @@ namespace FirstDraft.Tests
         {
             // Arrange
             // Starts with 20 HP
-            Monster bat = MonsterFactory.CreateMonster(1);
-            Stats playerStats = new(29, 52, 35);
-            Player player = new ("Zaza", playerStats);
+            int batMonsterID = 1;
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingDamage = 153;
+            int zeroHP = 0;
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new ("Freya", playerStats);
 
             // Act
             // More than current HP
-            bat.TakeDamage(153, player);
+            bat.TakeDamage(incomingDamage, player);
 
             // Assert
             // Should not go negative
-            Assert.Equal(0, bat.CurrentHP);
+            Assert.Equal(zeroHP, bat.CurrentHP);
         }
 
 
@@ -117,7 +148,7 @@ namespace FirstDraft.Tests
         //     // HP: 20
         //     Monster bat = MonsterFactory.CreateMonster(1);
         //     Stats playerStats = new(29, 52, 35);
-        //     Player player = new ("Zaza", playerStats);
+        //     Player player = new ("Freya", playerStats);
 
         //     // Act
         //     bat.TakeDamage(100, player);
@@ -128,47 +159,57 @@ namespace FirstDraft.Tests
         // }
 
         [Fact]
-            public void Monster_CreateInstance_CurrentHPMatchesMaxHP()
+        public void Monster_CreateInstance_CurrentHPMatchesMaxHP()
         {
             // Arrange + Act
-            // Starts with 20 HP
-            Monster bat = MonsterFactory.CreateMonster(1);
+            int batMonsterID = 1;
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Assert
             // Starts with full HP
             Assert.Equal(bat.CurrentHP, bat.MaxHP);
-            Assert.Equal(150, bat.CurrentHP);
-            Assert.Equal(150, bat.MaxHP);
         }
 
         [Fact]
         public void MonsterTakeDamage_TakeMoreDamageThanCurrentHP_CurrentHPDoesNotGoNegative()
         {
             // Arrange
-            Monster wolf = MonsterFactory.CreateMonster(2);
-            Stats playerStats = new(29, 52, 35);
-            Player player = new ("Zaza", playerStats);
+            int wolfMonsterID = 2;
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int zeroHP = 0;
+            int incomingDamage = 999999;
+            Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new ("Freya", playerStats);
             
             // Act
-            wolf.TakeDamage(99999, player);
+            wolf.TakeDamage(incomingDamage, player);
             
             // Assert
-            Assert.Equal(0, wolf.CurrentHP);
+            Assert.Equal(zeroHP, wolf.CurrentHP);
         }
 
        [Fact]
        public void MonsterTakeDamage_NegativeDamage_DoesNotChangeCurrentHP()
        {
            // Arrange
-           Monster wolf = MonsterFactory.CreateMonster(2);
-           Stats playerStats = new(29, 52, 35);
-           Player player = new ("Zaza", playerStats);
+            int wolfMonsterID = 2;
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingDamage = -999999;
+            int expectedCurrentHP = 150;
+            Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+           Player player = new ("Freya", playerStats);
            
            // Act
-           wolf.TakeDamage(-99999, player);
+           wolf.TakeDamage(incomingDamage, player);
            
            // Assert
-           Assert.Equal(150, wolf.CurrentHP);
+           Assert.Equal(expectedCurrentHP, wolf.CurrentHP);
        } 
 
        /* --- Temporary Comment --- */
@@ -178,7 +219,7 @@ namespace FirstDraft.Tests
     //       // Arrange
     //       Monster bat = MonsterFactory.CreateMonster(1);
     //       Stats playerStats = new(29, 52, 35);
-    //       Player player = new ("Zaza", playerStats);
+    //       Player player = new ("Freya", playerStats);
 
     //       bat.TakeDamage(15, player);
           
@@ -211,7 +252,7 @@ namespace FirstDraft.Tests
     //       // Arrange
     //       Monster bat = MonsterFactory.CreateMonster(1);
     //       Stats playerStats = new(29, 52, 35);
-    //       Player player = new ("Zaza", playerStats);
+    //       Player player = new ("Freya", playerStats);
 
     //       bat.TakeDamage(10, player);
           
@@ -227,15 +268,20 @@ namespace FirstDraft.Tests
         public void MonsterKillMonster_PlayerKillMonster_PlayerReceivesCorrectExp()
         {
             // Arrange
-            Monster wolf = MonsterFactory.CreateMonster(2);
-            Stats playerStats = new(29, 52, 35);
-            Player player = new("Zaza", playerStats);
+            int wolfMonsterID = 2;
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int expectedExpGiven = 7;
+            Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new("Freya", playerStats);
              
             // Act
             player.KillMonster(wolf);
             
             // Assert
-            Assert.Equal(7, player.Experience);
+            Assert.Equal(expectedExpGiven, player.Experience);
         }
     }
 }

@@ -6,9 +6,22 @@ namespace FirstDraft.Tests
 {
     public class PlayerTests
     {
+
+        /* !!!! DELETE ME !!!!
+
+            int batMonsterID = 1;
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int incomingDamage = 999999;
+            int maxDamage = 9999;
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+       
+        */
+        
         /* ~~~~~~~~~~~ EXP ~~~~~~~~~~~ */
 
-        // DONE
         [Fact]
         public void PlayerLevelUp_GainMoreThan99Levels_LevelStopsAt99()
         {
@@ -28,7 +41,6 @@ namespace FirstDraft.Tests
             Assert.Equal(levelCap, player.Level);
         }
 
-        // DONE
         // Assuming EXP doesn't cause ding; for that, use [PlayerExpUp_MoreExpThanNeededToLevelUp_ExtraExpCarriesOver]
         [Fact]
         public void PlayerExpUp_GainOneExp_ExperienceIncreasesByOne()
@@ -50,7 +62,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expBefore + oneExp, player.Experience);
         }
 
-        // DONE
         [Fact]
         public void PlayerExpUp_MoreExpThanNeededToLevelUp_ExtraExpCarriesOver() 
         {
@@ -72,7 +83,6 @@ namespace FirstDraft.Tests
             Assert.Equal(newExp, player.Experience);
         }
 
-        // DONE
         [Fact]
         public void PlayerExpUp_GainEnoughExpToLevelUpMultipleTimes_LevelsUpMultipleTimes()
         {
@@ -95,7 +105,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedLevel, player.Level); 
         }
 
-        // DONE
         [Fact]
         public void PlayerExpUp_GainMultipleLevels_CurrentHPRemainsTheSame()
         {
@@ -119,7 +128,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedCurrentHP, player.CurrentHP);
         }
 
-        // DONE
         [Fact]
         public void PlayerExpUp_GainExactAmountOfExpToLevelUp_LevelIncreaseByOne()
         {
@@ -140,7 +148,6 @@ namespace FirstDraft.Tests
             Assert.Equal(initialLevel + 1, player.Level);
         }
 
-        // DONE
         [Fact]
         public void PlayerExpUp_NegativeExp_ExperienceDoesNotChange()
         {
@@ -160,7 +167,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedExp, player.Experience);
         }
 
-        // DONE
         [Fact]
         public void PlayerExpUp_ZeroExpGained_ExperienceDoesNotChange()
         {
@@ -180,7 +186,6 @@ namespace FirstDraft.Tests
             Assert.Equal(initialLevel, player.Level);
         }
         
-        // DONE
         [Fact]
         public void PlayerExpUp_MonsterKilled_CorrectExpGained()
         {
@@ -201,7 +206,6 @@ namespace FirstDraft.Tests
             Assert.Equal(wolfExp, player.Experience);
         }
 
-        // DONE
         [Fact]
         public void PlayerExpUp_KillMonsterWithEnoughExpToLevelUp_LevelUp()
         {
@@ -228,7 +232,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedPlayerLevel, player.Level);
         }
 
-        // DONE
         [Fact]
         public void PlayerExpUp_KillMultipleMonsters_GainMultipleLevels()
         {
@@ -257,7 +260,6 @@ namespace FirstDraft.Tests
         
         /* ~~~~~~~~~~~ Stats ~~~~~~~~~~~ */
         
-        // DONE
         [Fact]
         public void Player_InstanceCreated_InitializedStatsAreCorrect()
         {
@@ -266,7 +268,7 @@ namespace FirstDraft.Tests
             int defenseStat = 52;
             int magicStat = 35;
             Stats playerStats = new(strengthStat, defenseStat, magicStat);
-            Player player = new("Zazu", playerStats);
+            Player player = new("Freya", playerStats);
             
             // Assert
             Assert.Equal(strengthStat, playerStats.Strength);
@@ -274,7 +276,6 @@ namespace FirstDraft.Tests
             Assert.Equal(magicStat, playerStats.Magic);
         }
 
-        // DONE
         [Fact]
         public void PlayerExplUp_LevelUp_BaseStatsIncreaseAppropriately()
         {
@@ -299,7 +300,6 @@ namespace FirstDraft.Tests
         }
 
         /* ~~~~~~~~~~~ Damage ~~~~~~~~~~~ */
-        // DONE 
         [Fact]
         public void PlayerTakeDamage_Over9999_DamageStopsAt9999()
         {
@@ -321,7 +321,6 @@ namespace FirstDraft.Tests
             Assert.Equal(maxHP, finalDamage);
         }
 
-        // DONE
         [Fact]
         public void PlayerTakeDamage_PlayerTakeDamage_CorrectAmount()
         {
@@ -344,7 +343,6 @@ namespace FirstDraft.Tests
             Assert.Equal(remainingHP, player.CurrentHP);
         }
 
-        // DONE 
         [Fact]
         public void PlayerTakeDamage_TakeMoreDamageThanCurrentHP_CurrentHPDoesNotGoNegative()
         {
@@ -368,7 +366,6 @@ namespace FirstDraft.Tests
             Assert.Equal(zeroHP, player.CurrentHP);
         }
         
-        // DONE 
         [Fact]
         public void PlayerTakeDamage_NegativeDamage_DoesNotChangeCurrentHP()
         {
@@ -391,7 +388,6 @@ namespace FirstDraft.Tests
 
         }
 
-        // DONE
         [Fact]
         public void PlayerTakeDamage_DefenseFormula_CorrectDamageTaken()
         {
@@ -414,7 +410,6 @@ namespace FirstDraft.Tests
         }
 
         /* ~~~~~~~~~~~ HP ~~~~~~~~~~~ */
-        // DONE
         [Fact]
         public void PlayerHealHP_Heal_CorrectAmount()
         {
@@ -437,7 +432,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedRemainingHP, player.CurrentHP);
         }
 
-        // DONE
         [Fact]
         public void Player_CreateInstance_CurrentHPMatchesMaxHP()
         {
@@ -456,7 +450,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedMaxHP, player.MaxHP);
         }
 
-        // DONE
         [Fact]
         public void PlayerHealHP_HealMoreThanMaxHP_CurrentHPMatchesMaxHP()
         {
@@ -482,7 +475,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedCurrentHP, expectedMaxHP);
         }
 
-        // DONE
         [Fact]
         public void PlayerLevelUp_MaxHP_Increase()
         {
@@ -509,7 +501,6 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedMaxHP, player.MaxHP);
         }
 
-        // DONE
         [Fact]
         public void PlayerLevelUp_CurrentHP_DoesNotChange()
         {
