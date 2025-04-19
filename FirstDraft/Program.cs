@@ -137,10 +137,12 @@ namespace FirstDraft
                 return $"(Error) {Name} cannot receive negative EXP! ({exp})";
             }
 
-            string logMessage = $"\n{Name} gained {exp} EXP!\n";
+            string logMessage = "\n\n~~~~ [Victory Music] ~~~~\n" + 
+            $"\n{Name} gained {exp} EXP!\n";
             int prevExp;
             Experience += exp;
-            logMessage += $"Current EXP: {Experience}\n";
+            logMessage += $"Current EXP: {Experience}\n" +
+            "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n";
 
             while (Experience >= ExpThreshold)
             {
@@ -205,8 +207,9 @@ namespace FirstDraft
 
         public string KillMonster(Monster monster)
         {
-            string logMessage = $"{Name} defeated {monster.Name}\n";
+            string logMessage =  $"{Name} defeated {monster.Name}!\n";
             logMessage += ExpUp(monster.ExpGiven);
+
             return logMessage;
         }
     }
