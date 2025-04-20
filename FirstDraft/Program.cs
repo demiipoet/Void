@@ -259,6 +259,21 @@ namespace FirstDraft
     }
 
     /* ~~~~~~~~~~~~ Game Manager (Handles Combat) ~~~~~~~~~~~~ */
+    public static class CombatCalculator
+    {
+        public static int CalculateDamageTaken(Player player, Monster monster, string playerChoice, int baseDamage)
+        {
+            double incomingDamage = playerChoice == "D"
+                ? baseDamage / 2.0
+                : baseDamage;
+
+            double mitigationFactor = (255.0 - player.BaseStats.Defense) / 256;
+            int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
+            finalDamage = Math.Min(9999, finalDamage);
+
+            return finalDamage;
+        }
+    }
     public static class Game
     {
         public static void SaveCombatLog(string fileName, string folderName = "Logs")
@@ -317,25 +332,14 @@ namespace FirstDraft
            Console.WriteLine("======== End Combat Log ========\n"); 
         }
 
-        private static bool MonsterAttack(Player player, Monster monster, string playerChoice, Random rng)
+        private static bool ResolveEnemyTurn(Player player, Monster monster, string playerChoice, Random rng)
         {
             bool isPlayerAlive = true;
-            int monsterDamageDealt = rng.Next(3, 9) + monster.BaseStats.Strength;
+            int baseMonsterDamage = rng.Next(3, 9) + monster.BaseStats.Strength;
+            int finalDamage = CombatCalculator.CalculateDamageTaken(player, monster, playerChoice, baseMonsterDamage);
+            var (_, damageMessage) = player.TakeDamage(finalDamage, monster);
 
-            /* switch processedBattleChoice { case "D": {...}; case "A": {...}} */
-            if (playerChoice == "D")
-            {
-                double reducedDamage = monsterDamageDealt / 2;
-                var (_, damageMessage) = player.TakeDamage(reducedDamage, monster);
-
-                Log(damageMessage);
-            }
-            else
-            {
-                var (_, damageMessage) = player.TakeDamage(monsterDamageDealt, monster);
-
-                Log(damageMessage);
-            }
+            Log(damageMessage);
 
             if (player.CurrentHP <= 0)
             {
@@ -402,7 +406,7 @@ namespace FirstDraft
                     /* ~~~~ Monster Attacks ~~~~ */
                     if (monster.CurrentHP > 0)
                     {
-                        MonsterAttack(player, monster, processedBattleChoice, rng);
+                        ResolveEnemyTurn(player, monster, processedBattleChoice, rng);
                     }
 
                     turnNumber++;

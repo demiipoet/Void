@@ -46,7 +46,11 @@ namespace FirstDraft.Tests
             Player player = new ("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
             
+            int incomingDamage = 100;
+            int simulatedRng = 5;
+
             // Act
+            
             
             // Assert
         }
