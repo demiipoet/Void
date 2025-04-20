@@ -262,13 +262,14 @@ namespace FirstDraft
     public static class CombatCalculator
     {
         public static int CalculateDamageTaken(Player player, Monster monster, string playerChoice, int baseDamage)
-        {
+        { 
             double incomingDamage = playerChoice == "D"
                 ? baseDamage / 2.0
                 : baseDamage;
 
             double mitigationFactor = (255.0 - player.BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
+            
             finalDamage = Math.Min(9999, finalDamage);
 
             return finalDamage;

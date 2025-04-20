@@ -46,13 +46,20 @@ namespace FirstDraft.Tests
             Player player = new ("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
             
-            int incomingDamage = 100;
-            int simulatedRng = 5;
+            // Simulates RNG + Strength
+            int baseDamage = 100;
 
             // Act
-            
+            int actualDamage = CombatCalculator.CalculateDamageTaken(player, bat, "D", baseDamage);
+
+            // Expected:
+            double expectedReducedDamage = baseDamage / 2.0;
+            double mitigationFactor = (255.0 - playerStats.Defense) / 256;
+            int expectedFinalDamage = (int)Math.Round(expectedReducedDamage * mitigationFactor + 1);
             
             // Assert
+            Assert.Equal(expectedFinalDamage, actualDamage);
+
         }
         
         [Fact]
