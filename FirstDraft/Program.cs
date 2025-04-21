@@ -137,7 +137,8 @@ namespace FirstDraft
                 return $"(Error) {Name} cannot receive negative EXP! ({exp})";
             }
 
-            string logMessage = "\n\n~~~~ [Victory Music] ~~~~\n" + 
+            string logMessage =
+            "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" + 
             $"\n{Name} gained {exp} EXP!\n";
             int prevExp;
             Experience += exp;
@@ -277,7 +278,7 @@ namespace FirstDraft
         }
 
         // Player attacks monster
-        public static int CalculateDamageToMonster(Monster monster, Player player, string playerChoice, int baseDamage)
+        public static int CalculateDamageToMonster(Monster monster, Player player, int baseDamage)
         { 
             double mitigationFactor = (255.0 - monster.BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(baseDamage * mitigationFactor + 1);
@@ -385,14 +386,16 @@ namespace FirstDraft
                     switch (processedBattleChoice)
                     {
                         case "A":
-                            int playerDamageDealt = rng.Next(3, 8) + player.BaseStats.Strength;
-                            var (_, damageMessage) = monster.TakeDamage(playerDamageDealt, player);
-                            Log(damageMessage);
+                            int basePlayerDamage = rng.Next(3, 8) + player.BaseStats.Strength;
+                            int finalDamage = CombatCalculator.CalculateDamageToMonster(monster, player, basePlayerDamage);
+                            var (_, attackMessage) = monster.TakeDamage(finalDamage, player);
+                            Log(attackMessage);
 
                             if (monster.CurrentHP <= 0)
                             {
                                 string killMonsterMessage = player.KillMonster(monster);
                                 Log(killMonsterMessage);
+
                                 continue;
                             }
                             break;

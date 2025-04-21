@@ -20,7 +20,7 @@ namespace FirstDraft.Tests
             // Arrange
             // Simulate RNG = 5
             int basePlayerDamage = 5 + playerStats.Strength; 
-            int expectedDamage = CombatCalculator.CalculateDamageToMonster(bat, player, "A", basePlayerDamage);
+            int expectedDamage = CombatCalculator.CalculateDamageToMonster(bat, player, basePlayerDamage);
             int expectedRemainingHP = bat.MaxHP - expectedDamage;
 
             // Act
