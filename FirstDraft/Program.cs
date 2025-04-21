@@ -261,7 +261,8 @@ namespace FirstDraft
     /* ~~~~~~~~~~~~ Game Manager (Handles Combat) ~~~~~~~~~~~~ */
     public static class CombatCalculator
     {
-        public static int CalculateDamageTaken(Player player, Monster monster, string playerChoice, int baseDamage)
+        // Monster attacks player
+        public static int CalculateDamageToPlayer(Player player, Monster monster, string playerChoice, int baseDamage)
         { 
             double incomingDamage = playerChoice == "D"
                 ? baseDamage / 2.0
@@ -270,6 +271,17 @@ namespace FirstDraft
             double mitigationFactor = (255.0 - player.BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
             
+            finalDamage = Math.Min(9999, finalDamage);
+
+            return finalDamage;
+        }
+
+        // Player attacks monster
+        public static int CalculateDamageToMonster(Monster monster, Player player, string playerChoice, int baseDamage)
+        { 
+            double mitigationFactor = (255.0 - monster.BaseStats.Defense) / 256;
+            int finalDamage = (int)Math.Round(baseDamage * mitigationFactor + 1);
+
             finalDamage = Math.Min(9999, finalDamage);
 
             return finalDamage;
@@ -337,7 +349,7 @@ namespace FirstDraft
         {
             bool isPlayerAlive = true;
             int baseMonsterDamage = rng.Next(3, 9) + monster.BaseStats.Strength;
-            int finalDamage = CombatCalculator.CalculateDamageTaken(player, monster, playerChoice, baseMonsterDamage);
+            int finalDamage = CombatCalculator.CalculateDamageToPlayer(player, monster, playerChoice, baseMonsterDamage);
             var (_, damageMessage) = player.TakeDamage(finalDamage, monster);
 
             Log(damageMessage);

@@ -16,22 +16,44 @@ namespace FirstDraft.Tests
             Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new ("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
-            
-            int simulatedRng = 5;
-            int expectedRawDamage = simulatedRng + playerStats.Strength;
 
-            // Using the actual [TakeDamage] formula to calculate expected final damage
-            double mitigationFactor = (255.0 - bat.BaseStats.Defense) / 256;
-            int expectedFinalDamage = (int)Math.Round(expectedRawDamage * mitigationFactor + 1);
-            int expectedHPAfterAttack = bat.MaxHP - expectedFinalDamage;
-            
+            // Arrange
+            // Simulate RNG = 5
+            int basePlayerDamage = 5 + playerStats.Strength; 
+            int expectedDamage = CombatCalculator.CalculateDamageToMonster(bat, player, "A", basePlayerDamage);
+            int expectedRemainingHP = bat.MaxHP - expectedDamage;
+
             // Act
-            var (finalDamage, _) = bat.TakeDamage(expectedRawDamage, player);
-            
+            var (actualDamage, _) = bat.TakeDamage(basePlayerDamage, player);
+
             // Assert
-            Assert.Equal(expectedFinalDamage, finalDamage);
-            Assert.Equal(expectedHPAfterAttack, bat.CurrentHP);
+            Assert.Equal(expectedDamage, actualDamage);
+            Assert.Equal(expectedRemainingHP, bat.CurrentHP);
+        }
+
+        [Fact]
+        public void Battle_MonsterAttacksPlayer_CorrectDamageDealt()
+        {
+            // Arrange
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new ("Freya", playerStats);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
             
+            // Arrange
+            int basePlayerDamage = bat.BaseStats.Strength; 
+            int expectedDamage = CombatCalculator.CalculateDamageToPlayer(player, bat, "A", basePlayerDamage);
+            int expectedRemainingHP = player.MaxHP - expectedDamage;
+
+            // Act
+            var (actualDamage, _) = player.TakeDamage(basePlayerDamage, bat);
+
+            // Assert
+            Assert.Equal(expectedDamage, actualDamage);
+            Assert.Equal(expectedRemainingHP, player.CurrentHP);
         }
 
         [Fact]
@@ -50,7 +72,7 @@ namespace FirstDraft.Tests
             int baseDamage = 100;
 
             // Act
-            int actualDamage = CombatCalculator.CalculateDamageTaken(player, bat, "D", baseDamage);
+            int actualDamage = CombatCalculator.CalculateDamageToPlayer(player, bat, "D", baseDamage);
 
             // Expected:
             double expectedReducedDamage = baseDamage / 2.0;
@@ -59,7 +81,6 @@ namespace FirstDraft.Tests
             
             // Assert
             Assert.Equal(expectedFinalDamage, actualDamage);
-
         }
         
         [Fact]
