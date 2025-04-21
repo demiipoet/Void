@@ -263,7 +263,8 @@ namespace FirstDraft
     public static class CombatCalculator
     {
         // Monster attacks player
-        public static int CalculateDamageToPlayer(Player player, Monster monster, string playerChoice, int baseDamage)
+        // public static int CalculateDamageToPlayer(Player player, Monster monster, string playerChoice, int baseDamage)
+        public static int CalculateDamageToPlayer(Player player, string playerChoice, int baseDamage)
         { 
             double incomingDamage = playerChoice == "D"
                 ? baseDamage / 2.0
@@ -350,7 +351,7 @@ namespace FirstDraft
         {
             bool isPlayerAlive = true;
             int baseMonsterDamage = rng.Next(3, 9) + monster.BaseStats.Strength;
-            int finalDamage = CombatCalculator.CalculateDamageToPlayer(player, monster, playerChoice, baseMonsterDamage);
+            int finalDamage = CombatCalculator.CalculateDamageToPlayer(player, playerChoice, baseMonsterDamage);
             var (_, damageMessage) = player.TakeDamage(finalDamage, monster);
 
             Log(damageMessage);

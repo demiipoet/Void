@@ -5,8 +5,9 @@ namespace FirstDraft.Tests
 {
     public class BattleTests
     {
+        /* ~~~~~~~~~~~ Attack ~~~~~~~~~~~ */
         [Fact]
-        public void Battle_PlayerSelectsAttack_CorrectDamageDealt()
+        public void Battle_PlayaerAttacksMonster_CorrectDamageDealt()
         {
             // Arrange
             int strengthStat = 29;
@@ -45,7 +46,7 @@ namespace FirstDraft.Tests
             
             // Arrange
             int basePlayerDamage = bat.BaseStats.Strength; 
-            int expectedDamage = CombatCalculator.CalculateDamageToPlayer(player, bat, "A", basePlayerDamage);
+            int expectedDamage = CombatCalculator.CalculateDamageToPlayer(player, "A", basePlayerDamage);
             int expectedRemainingHP = player.MaxHP - expectedDamage;
 
             // Act
@@ -56,6 +57,7 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedRemainingHP, player.CurrentHP);
         }
 
+        /* ~~~~~~~~~~~ Defend ~~~~~~~~~~~ */
         [Fact]
         public void Battle_PlayerSelectsDefend_CorrectDamageReceived()
         {
@@ -72,7 +74,7 @@ namespace FirstDraft.Tests
             int baseDamage = 100;
 
             // Act
-            int actualDamage = CombatCalculator.CalculateDamageToPlayer(player, bat, "D", baseDamage);
+            int actualDamage = CombatCalculator.CalculateDamageToPlayer(player, "D", baseDamage);
 
             // Expected:
             double expectedReducedDamage = baseDamage / 2.0;
@@ -83,14 +85,28 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedFinalDamage, actualDamage);
         }
         
+        /* ~~~~~~~~~~~ Heal ~~~~~~~~~~~ */
         [Fact]
-        public void Battle_PlayerSelectsHeal_HealsCorrectAmount()
+        public void Battle_PlayerSelectsHeal_CorrectHPAmountRestored()
         {
             // Arrange
-            
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int batMonsterID = 1;
+            int incomingDamage = 125;
+            int expectedRemainingHP = 251;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new ("Freya", playerStats);
+            Monster bat = MonsterFactory.CreateMonster(batMonsterID);
+
             // Act
             
+            player.TakeDamage(incomingDamage, bat); // Simulate prior damage
+            player.CastSpell("Cure", bat); // Simulates player selecting ["H"] 
+
             // Assert
+            Assert.Equal(expectedRemainingHP, player.CurrentHP);
         }
     }
 }
