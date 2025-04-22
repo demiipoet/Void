@@ -1,6 +1,6 @@
 # Void: A JRPG-Inspired Engine Built from the Ground Up
 
-A turn-based JRPG-style engine written in C#, inspired by the *Final Fantasy* and *Persona* game series.
+A turn-based JRPG-style engine written in C#, inspired by *Final Fantasy VI*.
 This project explores core game mechanics like stat-based combat, experience-based leveling, and modular monster generation — with full unit testing to support robust development.
 
 ---
@@ -18,7 +18,7 @@ This project explores core game mechanics like stat-based combat, experience-bas
 ## Tech Stack
 
 - **Language**: C#
-- **Testing**: [xUnit](https://xunit.net/)
+- **Testing**: xUnit
 - **Editor**: VS Code
 - **Runtime**: .NET 9+
 
@@ -43,6 +43,7 @@ cd Void
 - Combat damage formulas with mitigation
 - Edge cases (negative EXP, damage limits, healing caps)
 - Monster factory and error handling
+- Attack, Defend, and Heal effects
 
 ### Quick Commands
 - **Run Game:** `dotnet run --project FirstDraft`
