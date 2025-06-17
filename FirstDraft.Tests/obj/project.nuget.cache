@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "5BtjLP4s5cI=",
+  "dgSpecHash": "C/bEOCjhhV0=",
   "success": true,
-  "projectFilePath": "/Users/dawn/Projects/Void/FirstDraft.Tests/FirstDraft.Tests.csproj",
+  "projectFilePath": "/Users/dawn/coding_projects/Void/FirstDraft.Tests/FirstDraft.Tests.csproj",
   "expectedPackageFiles": [
     "/Users/dawn/.nuget/packages/coverlet.collector/6.0.2/coverlet.collector.6.0.2.nupkg.sha512",
     "/Users/dawn/.nuget/packages/mic/1.0.1/mic.1.0.1.nupkg.sha512",

@@ -1003,11 +1003,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/dawn/Projects/Void/FirstDraft.Tests/FirstDraft.Tests.csproj",
+      "projectUniqueName": "/Users/dawn/coding_projects/Void/FirstDraft.Tests/FirstDraft.Tests.csproj",
       "projectName": "FirstDraft.Tests",
-      "projectPath": "/Users/dawn/Projects/Void/FirstDraft.Tests/FirstDraft.Tests.csproj",
+      "projectPath": "/Users/dawn/coding_projects/Void/FirstDraft.Tests/FirstDraft.Tests.csproj",
       "packagesPath": "/Users/dawn/.nuget/packages/",
-      "outputPath": "/Users/dawn/Projects/Void/FirstDraft.Tests/obj/",
+      "outputPath": "/Users/dawn/coding_projects/Void/FirstDraft.Tests/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/dawn/.nuget/NuGet/NuGet.Config"
@@ -1022,8 +1022,8 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
-            "/Users/dawn/Projects/Void/FirstDraft/FirstDraft.csproj": {
-              "projectPath": "/Users/dawn/Projects/Void/FirstDraft/FirstDraft.csproj"
+            "/Users/dawn/coding_projects/Void/FirstDraft/FirstDraft.csproj": {
+              "projectPath": "/Users/dawn/coding_projects/Void/FirstDraft/FirstDraft.csproj"
             }
           }
         }
