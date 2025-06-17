@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/dawn/Projects/Void/FirstDraft/FirstDraft.csproj": {}
+    "/Users/dawn/coding_projects/Void/FirstDraft/FirstDraft.csproj": {}
   },
   "projects": {
-    "/Users/dawn/Projects/Void/FirstDraft/FirstDraft.csproj": {
+    "/Users/dawn/coding_projects/Void/FirstDraft/FirstDraft.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/dawn/Projects/Void/FirstDraft/FirstDraft.csproj",
+        "projectUniqueName": "/Users/dawn/coding_projects/Void/FirstDraft/FirstDraft.csproj",
         "projectName": "FirstDraft",
-        "projectPath": "/Users/dawn/Projects/Void/FirstDraft/FirstDraft.csproj",
+        "projectPath": "/Users/dawn/coding_projects/Void/FirstDraft/FirstDraft.csproj",
         "packagesPath": "/Users/dawn/.nuget/packages/",
-        "outputPath": "/Users/dawn/Projects/Void/FirstDraft/obj/",
+        "outputPath": "/Users/dawn/coding_projects/Void/FirstDraft/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/dawn/.nuget/NuGet/NuGet.Config"

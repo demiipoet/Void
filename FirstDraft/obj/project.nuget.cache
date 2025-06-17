@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "vDTyW7wvGZg=",
+  "dgSpecHash": "EfyVasynGUM=",
   "success": true,
-  "projectFilePath": "/Users/dawn/Projects/Void/FirstDraft/FirstDraft.csproj",
+  "projectFilePath": "/Users/dawn/coding_projects/Void/FirstDraft/FirstDraft.csproj",
   "expectedPackageFiles": [
     "/Users/dawn/.nuget/packages/mic/1.0.1/mic.1.0.1.nupkg.sha512",
     "/Users/dawn/.nuget/packages/microsoft.codecoverage/17.13.0/microsoft.codecoverage.17.13.0.nupkg.sha512",

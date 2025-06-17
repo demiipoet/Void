@@ -17,7 +17,13 @@ namespace FirstDraft
    */ 
 
     /* ~~~~~~~~~~~~ Magic ~~~~~~~~~~~~ */
-    public enum SpellType { Heal, Damage, Buff, Debuff }
+    public enum SpellType
+    { 
+        Heal,
+        Damage,
+        Buff,
+        Debuff
+    }
 
     // Dunno if we'll need to change this to a traditional constructor
     // Maybe not if there's no logic here
@@ -260,7 +266,8 @@ namespace FirstDraft
     }
 
     /* ~~~~~~~~~~~~ Game Manager (Handles Combat) ~~~~~~~~~~~~ */
-    public static class CombatCalculator
+    // public static class CombatCalculator
+        public class CombatCalculator
     {
         // Monster attacks player
         // public static int CalculateDamageToPlayer(Player player, Monster monster, string playerChoice, int baseDamage)
@@ -289,6 +296,7 @@ namespace FirstDraft
             return finalDamage;
         }
     }
+    
     public static class Game
     {
         public static void SaveCombatLog(string fileName, string folderName = "Logs")
