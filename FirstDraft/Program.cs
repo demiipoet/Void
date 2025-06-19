@@ -266,11 +266,8 @@ namespace FirstDraft
     }
 
     /* ~~~~~~~~~~~~ Game Manager (Handles Combat) ~~~~~~~~~~~~ */
-    // public static class CombatCalculator
         public class CombatCalculator
     {
-        // Monster attacks player
-        // public static int CalculateDamageToPlayer(Player player, Monster monster, string playerChoice, int baseDamage)
         public static int CalculateDamageToPlayer(Player player, string playerChoice, int baseDamage)
         { 
             double incomingDamage = playerChoice == "D"
@@ -285,8 +282,7 @@ namespace FirstDraft
             return finalDamage;
         }
 
-        // Player attacks monster
-        public static int CalculateDamageToMonster(Monster monster, Player player, int baseDamage)
+        public static int CalculateDamageToMonster(Monster monster, int baseDamage)
         { 
             double mitigationFactor = (255.0 - monster.BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(baseDamage * mitigationFactor + 1);
@@ -306,7 +302,6 @@ namespace FirstDraft
                 Directory.CreateDirectory(folderName);
                 string fullPath = Path.Combine(folderName, fileName);
                 File.WriteAllLines(fullPath, combatLog);
-                // Console.WriteLine($"\nCombat log saved to {Path.GetFullPath(fullPath)}");
             }
             catch (Exception ex)
             {
@@ -325,14 +320,14 @@ namespace FirstDraft
             string? choice;
             do
             {
-                Console.WriteLine("Attack (A), Defend (D), or Heal (H)? ");
+                Console.WriteLine("Attack (A), Defend (D), Heal (H), or Run (R)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
-                if (choice != "A" && choice != "D" && choice != "H")
+                if (choice != "A" && choice != "D" && choice != "H" && choice != "R")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
-            } while (choice != "A" && choice != "D" && choice != "H");
+            } while (choice != "A" && choice != "D" && choice != "H" && choice != "R");
 
             return choice;
         }
@@ -381,12 +376,15 @@ namespace FirstDraft
             if (player.CurrentHP > 0)
             {
                 Random rng = new();
+                bool run = false;
 
-                Log($"\nA wild {monster.Name} appears!");
-                Log($"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}");
-                Log($"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n");
+                string battleStartMessage = 
+                $"\nA wild {monster.Name} appears!\n" +
+                $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
+                $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
 
-                while (player.CurrentHP > 0 && monster.CurrentHP > 0)
+                Log(battleStartMessage);
+                while (player.CurrentHP > 0 && monster.CurrentHP > 0 && run == false)
                 {
                     /* ~~~~ Player Attacks ~~~~ */
                     Log($"\n--- Turn {turnNumber} ---");
@@ -396,7 +394,7 @@ namespace FirstDraft
                     {
                         case "A":
                             int basePlayerDamage = rng.Next(3, 8) + player.BaseStats.Strength;
-                            int finalDamage = CombatCalculator.CalculateDamageToMonster(monster, player, basePlayerDamage);
+                            int finalDamage = CombatCalculator.CalculateDamageToMonster(monster, basePlayerDamage);
                             var (_, attackMessage) = monster.TakeDamage(finalDamage, player);
                             Log(attackMessage);
 
@@ -420,8 +418,18 @@ namespace FirstDraft
 
                         case "H":
                             var (_, healMessage) = player.CastSpell("Cure", monster);
+                            
                             Log(healMessage);
                             break;
+                        
+                        case "R":
+                            string runMessage =
+                            $"{player.Name} runs! \n" +
+                            $"{player.Name} gained {player.Experience} experience!";
+                            // Log($"{player.Name} runs!");
+                            Log(runMessage);
+                            run = true;
+                            continue;
                             
                         default:
                             Console.WriteLine("\nInput Error\n");
