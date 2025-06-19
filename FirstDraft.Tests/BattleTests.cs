@@ -5,7 +5,7 @@ namespace FirstDraft.Tests
 {
     public class BattleTests
     {
-        /* ~~~~~~~~~~~ Attack ~~~~~~~~~~~ */
+        /* ~~~~~~~~~~~ Section: Attack ~~~~~~~~~~~ */
         [Fact]
         public void Battle_PlayaerAttacksMonster_CorrectDamageDealt()
         {
@@ -57,7 +57,7 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedRemainingHP, player.CurrentHP);
         }
 
-        /* ~~~~~~~~~~~ Defend ~~~~~~~~~~~ */
+        /* ~~~~~~~~~~~ Section: Defend ~~~~~~~~~~~ */
         [Fact]
         public void Battle_PlayerSelectsDefend_CorrectDamageReceived()
         {
@@ -85,7 +85,7 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedFinalDamage, actualDamage);
         }
         
-        /* ~~~~~~~~~~~ Heal ~~~~~~~~~~~ */
+        /* ~~~~~~~~~~~ Section: Heal ~~~~~~~~~~~ */
         [Fact]
         public void Battle_PlayerSelectsHeal_CorrectHPAmountRestored()
         {

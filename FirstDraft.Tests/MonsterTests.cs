@@ -7,7 +7,7 @@ namespace FirstDraft.Tests
 {
     public class MonsterTests
     {
-        /* ~~~~~~~~~~~ Monster Factory ~~~~~~~~~~~ */
+        /* ~~~~~~~~~~~ Section: Monster Factory ~~~~~~~~~~~ */
         [Fact]
         public void MonsterCreateMonster_CreateMonsterInstance_Correctly()
         {
@@ -48,7 +48,7 @@ namespace FirstDraft.Tests
         }
         
 
-         /* ~~~~~~~~~~~ Damage ~~~~~~~~~~~ */
+         /* ~~~~~~~~~~~ Section: Damage ~~~~~~~~~~~ */
         [Fact]
         public void MonsterTakeDamage_Over9999_DamageStopsAt9999()
         {
@@ -139,7 +139,7 @@ namespace FirstDraft.Tests
         }
 
 
-        /* ~~~~~~~~~~~ HP ~~~~~~~~~~~ */
+        /* ~~~~~~~~~~~ Section: HP ~~~~~~~~~~~ */
         /* --- Temporary Comment --- */
         // [Fact]
         // public void MonsterHealHP_Heal_CorrectAmount()
@@ -263,7 +263,7 @@ namespace FirstDraft.Tests
     //       Assert.Equal(150, bat.CurrentHP);
     //   }
 
-        /* ~~~~~~~~~~~ EXP ~~~~~~~~~~~ */
+       /* ~~~~~~~~~~~ Section: EXP ~~~~~~~~~~~ */
         [Fact]
         public void MonsterKillMonster_PlayerKillMonster_PlayerReceivesCorrectExp()
         {
