@@ -561,5 +561,45 @@ namespace FirstDraft.Tests
 
         /* ~~~~~~~~~~~ Section: Magic ~~~~~~~~~~~ */
 
+        [Fact]
+        public void Player_Initialized_KnowsOnlyCure()
+        {
+            // Arrange + Act
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int customMaxHP = 200;
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new("Freya", playerStats, customMaxHP);
+
+            // Assert
+            Assert.Single(player.KnownSpells);
+            Assert.Contains(SpellBook.Cure, player.KnownSpells);
+        }
+
+        /* ~~~~~~~~~~~ Section: Magic ~~~~~~~~~~~ */
+
+       [Fact]
+       public void Player_TakeDamageReturnMessage_IsCorrect()
+       {
+           // Arrange
+           int strengthStat = 29;
+           int defenseStat = 52;
+           int magicStat = 35;
+           int wolfHealth = 150;
+           int wolfExp = 10;
+           int wolfStrength = 6;
+           int wolfDefense = 7;
+           int wolfMagic = 8;
+           int expectedPlayerLevel = 2;
+           Stats playerStats = new(strengthStat, defenseStat, magicStat);
+           Player player = new("Freya", playerStats);
+           Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagic));
+           
+           // Act
+           
+           // Assert
+       } 
+
     }
 }

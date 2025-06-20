@@ -347,7 +347,7 @@ namespace FirstDraft
             {
                 Console.WriteLine(entry);
             }
-           Console.WriteLine("======== End Combat Log ========\n"); 
+            Console.WriteLine("======== End Combat Log ========\n"); 
         }
 
         private static bool ResolveEnemyTurn(Player player, Monster monster, string playerChoice, Random rng)
