@@ -577,29 +577,70 @@ namespace FirstDraft.Tests
             Assert.Contains(SpellBook.Cure, player.KnownSpells);
         }
 
+
         /* ~~~~~~~~~~~ Section: Magic ~~~~~~~~~~~ */
 
-       [Fact]
-       public void Player_TakeDamageReturnMessage_IsCorrect()
-       {
-           // Arrange
-           int strengthStat = 29;
-           int defenseStat = 52;
-           int magicStat = 35;
-           int wolfHealth = 150;
-           int wolfExp = 10;
-           int wolfStrength = 6;
-           int wolfDefense = 7;
-           int wolfMagic = 8;
-           int expectedPlayerLevel = 2;
-           Stats playerStats = new(strengthStat, defenseStat, magicStat);
-           Player player = new("Freya", playerStats);
-           Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagic));
-           
-           // Act
-           
-           // Assert
-       } 
+        [Fact]
+        public void Player_TakeDamageReturnMessage_IsCorrect()
+        {
+            // Arrange
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int wolfHealth = 150;
+            int wolfExp = 10;
+            int wolfStrength = 6;
+            int wolfDefense = 7;
+            int wolfMagic = 8;
+            double incomingDamage = 8;
 
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new("Freya", playerStats);
+            Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagic));
+
+            var (finalDamage, damageMessage) = player.TakeDamage(incomingDamage, wolf);
+
+            string expectedMessage =
+            $"{wolf.Name} attacks {player.Name} for {finalDamage} damage!\n" +
+            $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
+            $"{wolf.Name}'s HP: {wolf.CurrentHP}/{wolf.MaxHP}";
+
+            // Act
+            player.TakeDamage(incomingDamage, wolf);
+
+            // Assert
+            Assert.Equal(expectedMessage, damageMessage);
+        } 
+
+        [Fact]
+        public void Player_CastSpellReturnMessage_IsCorrect()
+        {
+            // Arrange
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int wolfHealth = 150;
+            int wolfExp = 10;
+            int wolfStrength = 6;
+            int wolfDefense = 7;
+            int wolfMagic = 8;
+            int finalHealAmount = 0;
+
+            Spell cure = new("Cure", SpellType.Heal, 10, 5);
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new("Freya", playerStats);
+            Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagic));
+
+            string expectedMessage =
+                $"\n{player.Name} casts {cure.Name} and heals {finalHealAmount} HP!\n" +
+                $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
+                $"{wolf.Name}'s HP: {wolf.CurrentHP}/{wolf.MaxHP}\n";
+
+            // Act
+            var (EffectValue, healMessage) = player.CastSpell("Cure", wolf);
+
+            // Assert
+            Assert.Equal(expectedMessage, healMessage);
+        } 
     }
 }

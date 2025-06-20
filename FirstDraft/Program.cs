@@ -115,9 +115,15 @@ namespace FirstDraft
                 case SpellType.Heal:
                     double baseHealing = spell.Power * 4;
                     double scalingHealing = Level * BaseStats.Magic * 10.0 / 32;
-                    int finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
-                    finalHealAmount = Math.Max(0, finalHealAmount);
-                    CurrentHP = Math.Min(CurrentHP + finalHealAmount, MaxHP);
+                    // int finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
+                    int finalHealAmount;
+
+                    if (CurrentHP == MaxHP)
+                        finalHealAmount = 0;
+                    else
+                        finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
+                        finalHealAmount = Math.Max(0, finalHealAmount);
+                        CurrentHP = Math.Min(CurrentHP + finalHealAmount, MaxHP);
 
                     string message =
                         $"\n{Name} casts {spell.Name} and heals {finalHealAmount} HP!\n" +
