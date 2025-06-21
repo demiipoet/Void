@@ -578,7 +578,7 @@ namespace FirstDraft.Tests
         }
 
 
-        /* ~~~~~~~~~~~ Section: Magic ~~~~~~~~~~~ */
+        /* ~~~~~~~~~~~ Section: Text ~~~~~~~~~~~ */
 
         [Fact]
         public void Player_TakeDamageReturnMessage_IsCorrect()
@@ -610,7 +610,7 @@ namespace FirstDraft.Tests
 
             // Assert
             Assert.Equal(expectedMessage, damageMessage);
-        } 
+        }
 
         [Fact]
         public void Player_CastSpellReturnMessage_IsCorrect()
@@ -641,6 +641,37 @@ namespace FirstDraft.Tests
 
             // Assert
             Assert.Equal(expectedMessage, healMessage);
-        } 
+        }
+
+        [Fact]
+        public void Player_KillMonsterReturnMessage_IsCorrect()
+        {
+            // Arrange
+            int strengthStat = 29;
+            int defenseStat = 52;
+            int magicStat = 35;
+            int wolfHealth = 150;
+            int wolfExp = 7;
+            int wolfStrength = 6;
+            int wolfDefense = 7;
+            int wolfMagic = 8;
+
+            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Player player = new("Freya", playerStats);
+            Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagic));
+
+            // Act
+            string expectedMessage  =  $"{player.Name} defeated {wolf.Name}!\n";
+            expectedMessage +=
+            "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" + 
+            $"\n{player.Name} gained {wolfExp} EXP!\n";
+            expectedMessage += $"Current EXP: {wolfExp}\n" +
+            "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+
+            string actualMessage = player.KillMonster(wolf);
+
+            // Assert
+            Assert.Equal(expectedMessage, actualMessage);
+        }
     }
 }
