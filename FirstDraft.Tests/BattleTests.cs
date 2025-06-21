@@ -95,18 +95,43 @@ namespace FirstDraft.Tests
             int magicStat = 35;
             int batMonsterID = 1;
             int incomingDamage = 125;
-            int expectedRemainingHP = 251;
+            int expectedRemainingHP = 251; // See [Calculator] for heal amount
             Stats playerStats = new(strengthStat, defenseStat, magicStat);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Act
-
             player.TakeDamage(incomingDamage, bat); // Simulate prior damage
-            player.CastSpell("Cure", bat); // Simulates player selecting ["H"] 
+            var (healAmount, _) = player.CastSpell("Cure", bat);
 
             // Assert
             Assert.Equal(expectedRemainingHP, player.CurrentHP);
+            Assert.True(healAmount > 0);
+        }
+
+        [Fact]
+        public void Battle_PlayerSelectsHealAtFullHP_HealsZero()
+        {
+            // Arrange
+            int playerStrengthStat = 29;
+            int playerDefenseStat = 52;
+            int playerMagicStat = 35;
+            int wolfHealth = 150;
+            int wolfExp = 10;
+            int wolfStrength = 6;
+            int wolfDefense = 7;
+            int wolfMagic = 8;
+
+            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Player player = new("Freya", playerStats);
+            Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagic));
+
+            // Act
+            var (healAmount, healMessage) = player.CastSpell("Cure", wolf);
+
+            // Assert
+            Assert.Equal(0, healAmount);
+            Assert.Equal(player.MaxHP, player.CurrentHP);
         }
     }
 }
