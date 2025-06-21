@@ -174,6 +174,7 @@ namespace FirstDraft.Tests
 
             // Assert
             Assert.Equal(initialLevel, player.Level);
+            Assert.Equal(0, player.Experience);
         }
 
         [Fact]
@@ -581,7 +582,7 @@ namespace FirstDraft.Tests
         /* ~~~~~~~~~~~ Section: Text ~~~~~~~~~~~ */
 
         [Fact]
-        public void Player_TakeDamageReturnMessage_IsCorrect()
+        public void PlayerTakeDamage_ReturnMessage_IsCorrect()
         {
             // Arrange
             int strengthStat = 29;
@@ -613,7 +614,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_CastSpellReturnMessage_IsCorrect()
+        public void PlayerCastSpell_ReturnMessage_IsCorrect()
         {
             // Arrange
             int strengthStat = 29;
@@ -644,7 +645,7 @@ namespace FirstDraft.Tests
         }
 
         [Fact]
-        public void Player_KillMonsterReturnMessage_IsCorrect()
+        public void PlayerKillMonster_ReturnMessage_IsCorrect()
         {
             // Arrange
             int strengthStat = 29;

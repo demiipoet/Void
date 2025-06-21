@@ -14,11 +14,11 @@ namespace FirstDraft
     Stats playerStats = new(strengthStat, defenseStat, magicStat);
     Player player = new ("Freya", playerStats);
 
-   */ 
+   */
 
     /* ~~~~~~~~~~~~ Magic ~~~~~~~~~~~~ */
     public enum SpellType
-    { 
+    {
         Heal,
         Damage,
         Buff,
@@ -122,8 +122,8 @@ namespace FirstDraft
                         finalHealAmount = 0;
                     else
                         finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
-                        finalHealAmount = Math.Max(0, finalHealAmount);
-                        CurrentHP = Math.Min(CurrentHP + finalHealAmount, MaxHP);
+                    finalHealAmount = Math.Max(0, finalHealAmount);
+                    CurrentHP = Math.Min(CurrentHP + finalHealAmount, MaxHP);
 
                     string message =
                         $"\n{Name} casts {spell.Name} and heals {finalHealAmount} HP!\n" +
@@ -150,7 +150,7 @@ namespace FirstDraft
             }
 
             string logMessage =
-            "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" + 
+            "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
             $"\n{Name} gained {exp} EXP!\n";
             int prevExp;
             Experience += exp;
@@ -220,7 +220,7 @@ namespace FirstDraft
 
         public string KillMonster(Monster monster)
         {
-            string logMessage =  $"{Name} defeated {monster.Name}!\n";
+            string logMessage = $"{Name} defeated {monster.Name}!\n";
             logMessage += ExpUp(monster.ExpGiven);
 
             return logMessage;
@@ -272,24 +272,24 @@ namespace FirstDraft
     }
 
     /* ~~~~~~~~~~~~ Game Manager (Handles Combat) ~~~~~~~~~~~~ */
-        public class CombatCalculator
+    public class CombatCalculator
     {
         public static int CalculateDamageToPlayer(Player player, string playerChoice, int baseDamage)
-        { 
+        {
             double incomingDamage = playerChoice == "D"
                 ? baseDamage / 2.0
                 : baseDamage;
 
             double mitigationFactor = (255.0 - player.BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
-            
+
             finalDamage = Math.Min(9999, finalDamage);
 
             return finalDamage;
         }
 
         public static int CalculateDamageToMonster(Monster monster, int baseDamage)
-        { 
+        {
             double mitigationFactor = (255.0 - monster.BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(baseDamage * mitigationFactor + 1);
 
@@ -298,7 +298,7 @@ namespace FirstDraft
             return finalDamage;
         }
     }
-    
+
     public static class Game
     {
         public static void SaveCombatLog(string fileName, string folderName = "Logs")
@@ -353,7 +353,7 @@ namespace FirstDraft
             {
                 Console.WriteLine(entry);
             }
-            Console.WriteLine("======== End Combat Log ========\n"); 
+            Console.WriteLine("======== End Combat Log ========\n");
         }
 
         private static bool ResolveEnemyTurn(Player player, Monster monster, string playerChoice, Random rng)
@@ -384,7 +384,7 @@ namespace FirstDraft
                 Random rng = new();
                 bool run = false;
 
-                string battleStartMessage = 
+                string battleStartMessage =
                 $"\nA wild {monster.Name} appears!\n" +
                 $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
                 $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
@@ -395,7 +395,7 @@ namespace FirstDraft
                     /* ~~~~ Player Attacks ~~~~ */
                     Log($"\n--- Turn {turnNumber} ---");
                     string? processedBattleChoice = GetPlayerChoice();
-                    
+
                     switch (processedBattleChoice)
                     {
                         case "A":
@@ -414,7 +414,7 @@ namespace FirstDraft
                             break;
 
                         case "D":
-                            string message = 
+                            string message =
                                 $"\n{player.Name} defends!\n" +
                                 $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
                                 $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
@@ -424,10 +424,10 @@ namespace FirstDraft
 
                         case "H":
                             var (_, healMessage) = player.CastSpell("Cure", monster);
-                            
+
                             Log(healMessage);
                             break;
-                        
+
                         case "R":
                             string runMessage =
                             $"{player.Name} runs! \n" +
@@ -436,7 +436,7 @@ namespace FirstDraft
                             Log(runMessage);
                             run = true;
                             continue;
-                            
+
                         default:
                             Console.WriteLine("\nInput Error\n");
                             break;
@@ -465,7 +465,7 @@ namespace FirstDraft
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             Monster wolf = MonsterFactory.CreateMonster(2);
-            
+
 
             Game.Battle(player, bat);
             // Game.ShowCombatLog();

@@ -7,7 +7,7 @@ namespace FirstDraft.Tests
     {
         /* ~~~~~~~~~~~ Section: Attack ~~~~~~~~~~~ */
         [Fact]
-        public void Battle_PlayaerAttacksMonster_CorrectDamageDealt()
+        public void Battle_PlayerAttacksMonster_CorrectDamageDealt()
         {
             // Arrange
             int strengthStat = 29;
@@ -15,12 +15,12 @@ namespace FirstDraft.Tests
             int magicStat = 35;
             int batMonsterID = 1;
             Stats playerStats = new(strengthStat, defenseStat, magicStat);
-            Player player = new ("Freya", playerStats);
+            Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Arrange
             // Simulate RNG = 5
-            int basePlayerDamage = 5 + playerStats.Strength; 
+            int basePlayerDamage = 5 + playerStats.Strength;
             int expectedDamage = CombatCalculator.CalculateDamageToMonster(bat, basePlayerDamage);
             int expectedRemainingHP = bat.MaxHP - expectedDamage;
 
@@ -41,11 +41,11 @@ namespace FirstDraft.Tests
             int magicStat = 35;
             int batMonsterID = 1;
             Stats playerStats = new(strengthStat, defenseStat, magicStat);
-            Player player = new ("Freya", playerStats);
+            Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
-            
+
             // Arrange
-            int basePlayerDamage = bat.BaseStats.Strength; 
+            int basePlayerDamage = bat.BaseStats.Strength;
             int expectedDamage = CombatCalculator.CalculateDamageToPlayer(player, "A", basePlayerDamage);
             int expectedRemainingHP = player.MaxHP - expectedDamage;
 
@@ -67,9 +67,9 @@ namespace FirstDraft.Tests
             int magicStat = 35;
             int batMonsterID = 1;
             Stats playerStats = new(strengthStat, defenseStat, magicStat);
-            Player player = new ("Freya", playerStats);
+            Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
-            
+
             // Simulates RNG + Strength
             int baseDamage = 100;
 
@@ -80,11 +80,11 @@ namespace FirstDraft.Tests
             double expectedReducedDamage = baseDamage / 2.0;
             double mitigationFactor = (255.0 - playerStats.Defense) / 256;
             int expectedFinalDamage = (int)Math.Round(expectedReducedDamage * mitigationFactor + 1);
-            
+
             // Assert
             Assert.Equal(expectedFinalDamage, actualDamage);
         }
-        
+
         /* ~~~~~~~~~~~ Section: Heal ~~~~~~~~~~~ */
         [Fact]
         public void Battle_PlayerSelectsHeal_CorrectHPAmountRestored()
@@ -97,11 +97,11 @@ namespace FirstDraft.Tests
             int incomingDamage = 125;
             int expectedRemainingHP = 251;
             Stats playerStats = new(strengthStat, defenseStat, magicStat);
-            Player player = new ("Freya", playerStats);
+            Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Act
-            
+
             player.TakeDamage(incomingDamage, bat); // Simulate prior damage
             player.CastSpell("Cure", bat); // Simulates player selecting ["H"] 
 
