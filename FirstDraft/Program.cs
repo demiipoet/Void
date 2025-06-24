@@ -7,16 +7,7 @@ using System.Collections;
 
 namespace FirstDraft
 {
-    /*
-    int strengthStat = 29;
-    int defenseStat = 52;
-    int magicStat = 35;
-    Stats playerStats = new(strengthStat, defenseStat, magicStat);
-    Player player = new ("Freya", playerStats);
-
-   */
-
-    /* ~~~~~~~~~~~~ Magic ~~~~~~~~~~~~ */
+    /* ~~~~~~~~~~~~ Section: MagicAttack ~~~~~~~~~~~~ */
     public enum SpellType
     {
         Heal,
@@ -27,11 +18,11 @@ namespace FirstDraft
 
     // Dunno if we'll need to change this to a traditional constructor
     // Maybe not if there's no logic here
-    public class Spell(string name, SpellType type, int power, int mpCost)
+    public class Spell(string name, SpellType type, int spellPower, int mpCost)
     {
         public string Name { get; } = name;
         public SpellType Type { get; } = type;
-        public int Power { get; } = power;
+        public int SpellPower { get; } = spellPower;
         public int MPCost { get; } = mpCost;
     }
 
@@ -46,38 +37,21 @@ namespace FirstDraft
         {
             { Cure.Name, Cure },
             { Fire.Name, Fire },
-            { Protect.Name, Protect},
-            { Slow.Name, Slow}
+            { Protect.Name, Protect },
+            { Slow.Name, Slow }
         };
     }
 
-    /* ~~~~~~~~~~~~ Stats ~~~~~~~~~~~~ */
-    public class Stats(int strength, int defense, int magic)
+    /* ~~~~~~~~~~~~ Section: Stats ~~~~~~~~~~~~ */
+    public class Stats(int strength, int defense, int magicAttack, int magicDefense)
     {
-        /*
-        Player: 29
-        Bat: 5
-        Wolf: 6
-        */
         public int Strength { get; set; } = strength;
-
-        /*
-        Player: 52
-        Bat: 6
-        Wolf: 7
-        */
         public int Defense { get; set; } = defense;
-
-        /*
-        Player: 35
-        Bat: 7
-        Wolf: 8
-        */
-        public int Magic { get; set; } = magic;
-
+        public int MagicAttack { get; set; } = magicAttack;
+        public int MagicDefense { get; set; } = magicDefense;
     }
 
-    /* ~~~~~~~~~~~~ Player ~~~~~~~~~~~~ */
+    /* ~~~~~~~~~~~~ Section: Player ~~~~~~~~~~~~ */
     /* Converting to traditional constructor */
     // public class Player(string name, Stats baseStats, int maxHP = 300)
     public class Player
@@ -102,19 +76,20 @@ namespace FirstDraft
 
             // Every player begins with [Cure]
             KnownSpells.Add(SpellBook.Cure);
+            KnownSpells.Add(SpellBook.Fire);
         }
 
-        public (int EffectValue, string Message) CastSpell(string spellName, Monster monster)
+        public (int EffectValue, string Message) CastSpell(string spellName, Monster monster, Player player)
         {
             var spell = KnownSpells.FirstOrDefault(s => s.Name == spellName);
             if (spell == null)
-                return (0, $"(Error) {Name} does not know the spell '{spellName}'.");
+                return (0, $"\n(Error) {Name} does not know the spell '{spellName}'!\n");
 
             switch (spell.Type)
             {
                 case SpellType.Heal:
-                    double baseHealing = spell.Power * 4;
-                    double scalingHealing = Level * BaseStats.Magic * 10.0 / 32;
+                    double baseHealing = spell.SpellPower * 4;
+                    double scalingHealing = Level * BaseStats.MagicAttack * 10.0 / 32;
                     // int finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
                     int finalHealAmount;
 
@@ -122,20 +97,22 @@ namespace FirstDraft
                         finalHealAmount = 0;
                     else
                         finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
+
                     finalHealAmount = Math.Max(0, finalHealAmount);
                     CurrentHP = Math.Min(CurrentHP + finalHealAmount, MaxHP);
 
-                    string message =
+                    string healSpellMessage =
                         $"\n{Name} casts {spell.Name} and heals {finalHealAmount} HP!\n" +
                         $"{Name}'s HP: {CurrentHP}/{MaxHP}\n" +
                         $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
 
-                    return (finalHealAmount, message);
+                    return (finalHealAmount, healSpellMessage);
 
                 case SpellType.Damage:
-                    /* ~~~~ Update formula ~~~~ */
-                    int baseDamage = (int)Math.Round(spell.Power * (BaseStats.Magic / 10.0));
-                    return (baseDamage, $"{Name} casts {spell.Name} and deals {baseDamage} damage!");
+                    int spellDamage = CombatCalculator.CalculateMagicDamageToMonster(spell, player, monster);
+                    var (returnSpellDamage, returnSpellMessage) = monster.TakeMagicDamage(spell, spellDamage, player);
+
+                    return (returnSpellDamage, returnSpellMessage);
 
                 default:
                     return (0, $"(Error) Spell type not implemented.");
@@ -186,9 +163,9 @@ namespace FirstDraft
             BaseStats.Defense += 10;
             BaseStats.Defense = Math.Min(999, BaseStats.Defense);
 
-            int prevMagic = BaseStats.Magic;
-            BaseStats.Magic += 10;
-            BaseStats.Magic = Math.Min(999, BaseStats.Magic);
+            int prevMagicAttack = BaseStats.MagicAttack;
+            BaseStats.MagicAttack += 10;
+            BaseStats.MagicAttack = Math.Min(999, BaseStats.MagicAttack);
 
             return
             $"{Name} leveled up!\n" +
@@ -198,7 +175,7 @@ namespace FirstDraft
             $"Previous Defense: {prevDefense}, New Defense: {BaseStats.Defense}\n\n";
         }
 
-        public (int FinalDamage, string Message) TakeDamage(double incomingDamage, Monster monster)
+        public (int FinalDamage, string Message) TakePhysicalDamage(double incomingDamage, Monster monster)
         {
             if (incomingDamage < 0)
             {
@@ -218,6 +195,26 @@ namespace FirstDraft
             return (finalDamage, message);
         }
 
+        public (int FinalDamage, string Message) TakeMagicDamage(Spell spell, int incomingDamage, Monster monster)
+        {
+            if (incomingDamage < 0)
+            {
+                return (0, $"(Error) {Name} cannot take negative damage! ({incomingDamage})");
+            }
+
+            double mitigationFactor = (255.0 - BaseStats.MagicDefense) / 256;
+            int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
+            finalDamage = Math.Min(9999, finalDamage);
+            CurrentHP = Math.Max(CurrentHP - finalDamage, 0);
+
+            string damageSpellMessage =
+                $"\n{Name} casts {spell.Name} for {finalDamage} damage!\n" +
+                $"{Name}'s HP: {CurrentHP}/{MaxHP}\n" +
+                $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
+
+            return (finalDamage, damageSpellMessage);
+        }
+
         public string KillMonster(Monster monster)
         {
             string logMessage = $"{Name} defeated {monster.Name}!\n";
@@ -227,7 +224,7 @@ namespace FirstDraft
         }
     }
 
-    /* ~~~~~~~~~~~~ Monster ~~~~~~~~~~~~ */
+    /* ~~~~~~~~~~~~ Section: Monster ~~~~~~~~~~~~ */
     public class Monster(string name, int maxHP, int expGiven, Stats baseStats)
     {
         public string? Name { get; } = $"[Monster] {name}";
@@ -236,45 +233,63 @@ namespace FirstDraft
         public int ExpGiven { get; } = expGiven;
         public Stats BaseStats { get; private set; } = baseStats;
 
-        public (int FinalDamage, string Message) TakeDamage(int incomingDamage, Player player)
+        public (int FinalDamage, string Message) TakePhysicalDamage(int incomingDamage, Player player)
         {
             if (incomingDamage < 0)
             {
                 return (0, $"(Error) {Name} cannot take negative damage! ({incomingDamage})");
             }
 
-            // Bat: (150, 5, 5, 6)
-            //Wolf: (150, 7, 6, 7)
             double mitigationFactor = (255.0 - BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
             finalDamage = Math.Min(9999, finalDamage);
             CurrentHP = Math.Max(CurrentHP - finalDamage, 0);
 
-            string message =
+            string physAttackMessage =
             $"\n{player.Name} attacks {Name} for {finalDamage} damage!\n" +
             $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
             $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
 
-            return (finalDamage, message);
+            return (finalDamage, physAttackMessage);
+        }
+
+        public (int FinalDamage, string Message) TakeMagicDamage(Spell spell, int incomingDamage, Player player)
+        {
+            if (incomingDamage < 0)
+            {
+                return (0, $"(Error) {Name} cannot take negative damage! ({incomingDamage})");
+            }
+
+            double mitigationFactor = (255.0 - BaseStats.MagicDefense) / 256;
+            int finalDamage = (int)Math.Round(incomingDamage * mitigationFactor + 1);
+            finalDamage = Math.Min(9999, finalDamage);
+            CurrentHP = Math.Max(CurrentHP - finalDamage, 0);
+
+            string damageSpellMessage =
+                $"\n{Name} casts {spell.Name} for {finalDamage} damage!\n" +
+                $"{player.Name}'s HP: {CurrentHP}/{MaxHP}\n" +
+                $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
+
+            return (finalDamage, damageSpellMessage);
         }
     }
 
-    /* ~~~~~~~~~~~~ Monster Factory ~~~~~~~~~~~~ */
+    /* ~~~~~~~~~~~~ Section: Monster Factory ~~~~~~~~~~~~ */
     public static class MonsterFactory
     {
         public static Monster CreateMonster(int monsterID) =>
         monsterID switch
         {
-            1 => new("Bat", 150, 5, new Stats(5, 6, 7)),
-            2 => new("Wolf", 150, 7, new Stats(6, 7, 8)),
+            1 => new("Bat", 150, 5, new Stats(5, 6, 7, 8)),
+            2 => new("Wolf", 150, 7, new Stats(6, 7, 8, 9)),
             _ => throw new ArgumentException("Invalid MonsterID")
         };
     }
 
-    /* ~~~~~~~~~~~~ Game Manager (Handles Combat) ~~~~~~~~~~~~ */
+    /* ~~~~~~~~~~~~ Section: Game Manager (Handles Combat) ~~~~~~~~~~~~ */
     public class CombatCalculator
     {
-        public static int CalculateDamageToPlayer(Player player, string playerChoice, int baseDamage)
+        public static int CalculatePhysicalDamageToPlayer(Player player, string playerChoice, int baseDamage)
         {
             double incomingDamage = playerChoice == "D"
                 ? baseDamage / 2.0
@@ -288,11 +303,20 @@ namespace FirstDraft
             return finalDamage;
         }
 
-        public static int CalculateDamageToMonster(Monster monster, int baseDamage)
+        public static int CalculatePhysicalDamageToMonster(Monster monster, int baseDamage)
         {
             double mitigationFactor = (255.0 - monster.BaseStats.Defense) / 256;
             int finalDamage = (int)Math.Round(baseDamage * mitigationFactor + 1);
+            finalDamage = Math.Min(9999, finalDamage);
 
+            return finalDamage;
+        }
+
+        public static int CalculateMagicDamageToMonster(Spell spell, Player player, Monster monster)
+        {
+            int baseSpellDamage = spell.SpellPower * 4 + (player.Level * player.BaseStats.MagicAttack * spell.SpellPower / 32);
+            double mitigationFactor = (255.0 - monster.BaseStats.Defense) / 256;
+            int finalDamage = (int)Math.Round(baseSpellDamage * mitigationFactor + 1);
             finalDamage = Math.Min(9999, finalDamage);
 
             return finalDamage;
@@ -326,14 +350,14 @@ namespace FirstDraft
             string? choice;
             do
             {
-                Console.WriteLine("Attack (A), Defend (D), Heal (H), or Run (R)? ");
+                Console.WriteLine("Attack (A), Defend (D), Fire (F), Heal (H), or Run (R)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
-                if (choice != "A" && choice != "D" && choice != "H" && choice != "R")
+                if (choice != "A" && choice != "D" && choice != "H" && choice != "F" && choice != "R")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
-            } while (choice != "A" && choice != "D" && choice != "H" && choice != "R");
+            } while (choice != "A" && choice != "D" && choice != "H" && choice != "F" && choice != "R");
 
             return choice;
         }
@@ -360,8 +384,9 @@ namespace FirstDraft
         {
             bool isPlayerAlive = true;
             int baseMonsterDamage = rng.Next(3, 9) + monster.BaseStats.Strength;
-            int finalDamage = CombatCalculator.CalculateDamageToPlayer(player, playerChoice, baseMonsterDamage);
-            var (_, damageMessage) = player.TakeDamage(finalDamage, monster);
+            int finalDamage = CombatCalculator.CalculatePhysicalDamageToPlayer(player, playerChoice, baseMonsterDamage);
+            var (_, damageMessage) = player.TakePhysicalDamage(finalDamage, monster);
+
 
             Log(damageMessage);
 
@@ -399,9 +424,10 @@ namespace FirstDraft
                     switch (processedBattleChoice)
                     {
                         case "A":
+                            // Update when we introduce weapons / [BattlePower]
                             int basePlayerDamage = rng.Next(3, 8) + player.BaseStats.Strength;
-                            int finalDamage = CombatCalculator.CalculateDamageToMonster(monster, basePlayerDamage);
-                            var (_, attackMessage) = monster.TakeDamage(finalDamage, player);
+                            int finalDamage = CombatCalculator.CalculatePhysicalDamageToMonster(monster, basePlayerDamage);
+                            var (_, attackMessage) = monster.TakePhysicalDamage(finalDamage, player);
                             Log(attackMessage);
 
                             if (monster.CurrentHP <= 0)
@@ -423,18 +449,33 @@ namespace FirstDraft
                             break;
 
                         case "H":
-                            var (_, healMessage) = player.CastSpell("Cure", monster);
+                            var (_, healMagicMessage) = player.CastSpell("Cure", monster, player);
 
-                            Log(healMessage);
+                            Log(healMagicMessage);
+                            break;
+
+                        case "F":
+                            var (_, magicDamageMessage) = player.CastSpell("Fire", monster, player);
+
+                            Log(magicDamageMessage);
+
+                            if (monster.CurrentHP <= 0)
+                            {
+                                string killMonsterMessage = player.KillMonster(monster);
+                                Log(killMonsterMessage);
+
+                                continue;
+                            }
                             break;
 
                         case "R":
                             string runMessage =
-                            $"{player.Name} runs! \n" +
-                            $"{player.Name} gained {player.Experience} experience!";
-                            // Log($"{player.Name} runs!");
+                            $"\n{player.Name} runs! \n" +
+                            player.ExpUp(0);
+
                             Log(runMessage);
                             run = true;
+
                             continue;
 
                         default:
@@ -454,17 +495,30 @@ namespace FirstDraft
         }
     }
 
-    /* ~~~~~~~~~~~~ Main Program ~~~~~~~~~~~~ */
+    /* ~~~~~~~~~~~~ Section: Main Program ~~~~~~~~~~~~ */
     public class Program
     {
         static void Main(string[] args)
         {
             Console.WriteLine("\nWelcome to Void.");
 
-            Stats playerStats = new(29, 52, 35);
+            Stats playerStats = new(29, 52, 35, 25);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             Monster wolf = MonsterFactory.CreateMonster(2);
+
+            // Test iterating through [KnownSpells]
+            // foreach (Spell spell in player.KnownSpells)
+            // {
+            //     Console.WriteLine($"Spell (foreach): {spell.Name}");
+            // }
+
+            // for (var i = 0; i < player.KnownSpells.Count; i++)
+            // {
+            //     Console.WriteLine($"Spell (for): {player.KnownSpells[i].Name}");
+            // }
+
+            // Console.WriteLine($"Straight Print: {player.KnownSpells[0].Name}");
 
 
             Game.Battle(player, bat);
