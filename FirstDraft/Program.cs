@@ -167,6 +167,10 @@ namespace FirstDraft
             BaseStats.MagicAttack += 10;
             BaseStats.MagicAttack = Math.Min(999, BaseStats.MagicAttack);
 
+            int prevMagicDefense = BaseStats.MagicDefense;
+            BaseStats.MagicDefense += 10;
+            BaseStats.MagicDefense = Math.Min(999, BaseStats.MagicDefense);
+
             return
             $"{Name} leveled up!\n" +
             $"Previous Level: {prevLevel}, New Level: {Level}\n" +

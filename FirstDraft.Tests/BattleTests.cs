@@ -10,22 +10,24 @@ namespace FirstDraft.Tests
         public void Battle_PlayerAttacksMonster_CorrectDamageDealt()
         {
             // Arrange
-            int strengthStat = 29;
-            int defenseStat = 52;
-            int magicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int batMonsterID = 1;
-            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Arrange
             // Simulate RNG = 5
             int basePlayerDamage = 5 + playerStats.Strength;
-            int expectedDamage = CombatCalculator.CalculateDamageToMonster(bat, basePlayerDamage);
+
+            int expectedDamage = CombatCalculator.CalculatePhysicalDamageToMonster(bat, basePlayerDamage);
             int expectedRemainingHP = bat.MaxHP - expectedDamage;
 
             // Act
-            var (actualDamage, _) = bat.TakeDamage(basePlayerDamage, player);
+            var (actualDamage, _) = bat.TakePhysicalDamage(basePlayerDamage, player);
 
             // Assert
             Assert.Equal(expectedDamage, actualDamage);
@@ -36,21 +38,22 @@ namespace FirstDraft.Tests
         public void Battle_MonsterAttacksPlayer_CorrectDamageDealt()
         {
             // Arrange
-            int strengthStat = 29;
-            int defenseStat = 52;
-            int magicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int batMonsterID = 1;
-            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Arrange
             int basePlayerDamage = bat.BaseStats.Strength;
-            int expectedDamage = CombatCalculator.CalculateDamageToPlayer(player, "A", basePlayerDamage);
+            int expectedDamage = CombatCalculator.CalculatePhysicalDamageToPlayer(player, "A", basePlayerDamage);
             int expectedRemainingHP = player.MaxHP - expectedDamage;
 
             // Act
-            var (actualDamage, _) = player.TakeDamage(basePlayerDamage, bat);
+            var (actualDamage, _) = player.TakePhysicalDamage(basePlayerDamage, bat);
 
             // Assert
             Assert.Equal(expectedDamage, actualDamage);
@@ -62,11 +65,12 @@ namespace FirstDraft.Tests
         public void Battle_PlayerSelectsDefend_CorrectDamageReceived()
         {
             // Arrange
-            int strengthStat = 29;
-            int defenseStat = 52;
-            int magicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int batMonsterID = 1;
-            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
@@ -74,7 +78,7 @@ namespace FirstDraft.Tests
             int baseDamage = 100;
 
             // Act
-            int actualDamage = CombatCalculator.CalculateDamageToPlayer(player, "D", baseDamage);
+            int actualDamage = CombatCalculator.CalculatePhysicalDamageToPlayer(player, "D", baseDamage);
 
             // Expected:
             double expectedReducedDamage = baseDamage / 2.0;
@@ -90,19 +94,20 @@ namespace FirstDraft.Tests
         public void Battle_PlayerSelectsHeal_CorrectHPAmountRestored()
         {
             // Arrange
-            int strengthStat = 29;
-            int defenseStat = 52;
-            int magicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int batMonsterID = 1;
             int incomingDamage = 125;
             int expectedRemainingHP = 251; // See [Calculator] for heal amount
-            Stats playerStats = new(strengthStat, defenseStat, magicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
 
             // Act
-            player.TakeDamage(incomingDamage, bat); // Simulate prior damage
-            var (healAmount, _) = player.CastSpell("Cure", bat);
+            player.TakePhysicalDamage(incomingDamage, bat); // Simulate prior damage
+            var (healAmount, _) = player.CastSpell("Cure", bat, player);
 
             // Assert
             Assert.Equal(expectedRemainingHP, player.CurrentHP);
@@ -113,21 +118,23 @@ namespace FirstDraft.Tests
         public void Battle_PlayerSelectsHealAtFullHP_HealsZero()
         {
             // Arrange
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int wolfHealth = 150;
             int wolfExp = 10;
             int wolfStrength = 6;
             int wolfDefense = 7;
-            int wolfMagic = 8;
+            int wolfMagicAttack = 8;
+            int wolfMagicDeffense = 9;
 
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
-            Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagic));
+            Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagicAttack, wolfMagicDeffense));
 
             // Act
-            var (healAmount, healMessage) = player.CastSpell("Cure", wolf);
+            var (healAmount, healMessage) = player.CastSpell("Cure", wolf, player);
 
             // Assert
             Assert.Equal(0, healAmount);

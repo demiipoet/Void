@@ -52,17 +52,18 @@ namespace FirstDraft.Tests
         {
             // Arrange
             int batMonsterID = 1;
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int incomingDamage = 999999;
             int maxDamage = 9999;
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
 
             // Act
-            var (finalDamage, _) = bat.TakeDamage(incomingDamage, player);
+            var (finalDamage, _) = bat.TakePhysicalDamage(incomingDamage, player);
             // Assert
             Assert.Equal(maxDamage, finalDamage);
         }
@@ -72,17 +73,18 @@ namespace FirstDraft.Tests
         {
             // Arrange
             int batMonsterID = 1;
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int incomingDamage = 5;
             int expectedRemainingHP = 144;
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
 
             // Act
-            bat.TakeDamage(incomingDamage, player);
+            bat.TakePhysicalDamage(incomingDamage, player);
 
             // Assert
             Assert.Equal(expectedRemainingHP, bat.CurrentHP);
@@ -93,18 +95,19 @@ namespace FirstDraft.Tests
         {
             // Arrange
             int batMonsterID = 1;
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int incomingDamage = -5;
             int expectedRemainingHP = 150;
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
 
             // Act
             // Negative damage should not reduce HP
-            bat.TakeDamage(incomingDamage, player);
+            bat.TakePhysicalDamage(incomingDamage, player);
 
             // Assert
             // HP should remain unchanged
@@ -116,18 +119,19 @@ namespace FirstDraft.Tests
         {
             // Arrange
             int batMonsterID = 1;
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int incomingDamage = 153;
             int zeroHP = 0;
             Monster bat = MonsterFactory.CreateMonster(batMonsterID);
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
 
             // Act
             // More than current HP
-            bat.TakeDamage(incomingDamage, player);
+            bat.TakePhysicalDamage(incomingDamage, player);
 
             // Assert
             // Should not go negative
@@ -139,18 +143,19 @@ namespace FirstDraft.Tests
         {
             // Arrange
             int wolfMonsterID = 2;
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int incomingDamage = 5;
             int expectedRemainingHP = 138; // See [Calculators] for damage total
             Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
 
             // Act
-            wolf.TakeDamage(incomingDamage, player);
-            wolf.TakeDamage(incomingDamage, player);
+            wolf.TakePhysicalDamage(incomingDamage, player);
+            wolf.TakePhysicalDamage(incomingDamage, player);
 
             // Assert
             Assert.Equal(expectedRemainingHP, wolf.CurrentHP);
@@ -176,17 +181,18 @@ namespace FirstDraft.Tests
         {
             // Arrange
             int wolfMonsterID = 2;
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int zeroHP = 0;
             int incomingDamage = 999999;
             Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
 
             // Act
-            wolf.TakeDamage(incomingDamage, player);
+            wolf.TakePhysicalDamage(incomingDamage, player);
 
             // Assert
             Assert.Equal(zeroHP, wolf.CurrentHP);
@@ -197,17 +203,18 @@ namespace FirstDraft.Tests
         {
             // Arrange
             int wolfMonsterID = 2;
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int incomingDamage = -999999;
             int expectedCurrentHP = 150;
             Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
 
             // Act
-            wolf.TakeDamage(incomingDamage, player);
+            wolf.TakePhysicalDamage(incomingDamage, player);
 
             // Assert
             Assert.Equal(expectedCurrentHP, wolf.CurrentHP);
@@ -219,12 +226,13 @@ namespace FirstDraft.Tests
         {
             // Arrange
             int wolfMonsterID = 2;
-            int playerStrengthStat = 29;
-            int playerDefenseStat = 52;
-            int playerMagicStat = 35;
+            int playerStrength = 29;
+            int playerDefense = 52;
+            int playerMagicAttack = 35;
+            int playerMagicDefense = 36;
             int expectedExpGiven = 7;
             Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
-            Stats playerStats = new(playerStrengthStat, playerDefenseStat, playerMagicStat);
+            Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
 
             // Act
