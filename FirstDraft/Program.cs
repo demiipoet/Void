@@ -76,7 +76,7 @@ namespace FirstDraft
 
             // Every player begins with [Cure]
             KnownSpells.Add(SpellBook.Cure);
-            KnownSpells.Add(SpellBook.Fire);
+            // KnownSpells.Add(SpellBook.Fire);
         }
 
         public (int EffectValue, string Message) CastSpell(string spellName, Monster monster, Player player)
@@ -90,7 +90,6 @@ namespace FirstDraft
                 case SpellType.Heal:
                     double baseHealing = spell.SpellPower * 4;
                     double scalingHealing = Level * BaseStats.MagicAttack * 10.0 / 32;
-                    // int finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
                     int finalHealAmount;
 
                     if (CurrentHP == MaxHP)
@@ -119,6 +118,19 @@ namespace FirstDraft
             }
         }
 
+        public string LearnSpell(int Level)
+        {
+            if (Level >= 2)
+            {
+                KnownSpells.Add(SpellBook.Fire);
+                return
+                    "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+                    $"\n{Name} learned [Fire]!\n" +
+                    "\n~~~~~~~~~~~~~~~~~~~~~~~~~";
+            }
+            return "";
+        }
+
         public string ExpUp(int exp)
         {
             if (exp < 0)
@@ -139,7 +151,8 @@ namespace FirstDraft
                 prevExp = Experience;
                 Experience -= ExpThreshold;
                 logMessage += LevelUp();
-                logMessage += $"Previous EXP: {prevExp}, Current EXP: {Experience}\n";
+                // logMessage += $"Previous EXP: {prevExp}, Current EXP: {Experience}\n";
+                logMessage += LearnSpell(Level);
             }
             return logMessage;
         }
@@ -171,12 +184,20 @@ namespace FirstDraft
             BaseStats.MagicDefense += 10;
             BaseStats.MagicDefense = Math.Min(999, BaseStats.MagicDefense);
 
-            return
-            $"{Name} leveled up!\n" +
-            $"Previous Level: {prevLevel}, New Level: {Level}\n" +
-            $"Previous Max HP: {prevMaxHP}, New Max HP: {MaxHP}\n" +
-            $"Previous Strength: {prevStrength}, New Strength: {BaseStats.Strength}\n" +
-            $"Previous Defense: {prevDefense}, New Defense: {BaseStats.Defense}\n\n";
+            // string learnSpellMessage = LearnSpell(Level);
+
+            string levelUpMessage =
+                $"\n{Name} leveled up!\n" +
+                $"Previous Level: {prevLevel}, New Level: {Level}\n" +
+                $"Previous Max HP: {prevMaxHP}, New Max HP: {MaxHP}\n" +
+                $"Previous Strength: {prevStrength}, New Strength: {BaseStats.Strength}\n" +
+                $"Previous Defense: {prevDefense}, New Defense: {BaseStats.Defense}\n" +
+                $"Previous Magic Attack: {prevMagicAttack}, New Magic Strength: {BaseStats.MagicAttack}\n" +
+                $"Previous Magic Defense: {prevMagicDefense}, New Magic Defense: {BaseStats.MagicDefense}\n";
+
+            // levelUpMessage += learnSpellMessage;
+
+            return levelUpMessage;
         }
 
         public (int FinalDamage, string Message) TakePhysicalDamage(double incomingDamage, Monster monster)
@@ -286,6 +307,7 @@ namespace FirstDraft
         {
             1 => new("Bat", 150, 5, new Stats(5, 6, 7, 8)),
             2 => new("Wolf", 150, 7, new Stats(6, 7, 8, 9)),
+            3 => new("Wyvern", 150, 9, new Stats(7, 8, 9, 10)),
             _ => throw new ArgumentException("Invalid MonsterID")
         };
     }
@@ -354,14 +376,14 @@ namespace FirstDraft
             string? choice;
             do
             {
-                Console.WriteLine("Attack (A), Defend (D), Fire (F), Heal (H), or Run (R)? ");
+                Console.WriteLine("Attack (A), Defend (D), Fire (F), Cure (C), or Run (R)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
-                if (choice != "A" && choice != "D" && choice != "H" && choice != "F" && choice != "R")
+                if (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "R")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
-            } while (choice != "A" && choice != "D" && choice != "H" && choice != "F" && choice != "R");
+            } while (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "R");
 
             return choice;
         }
@@ -452,7 +474,7 @@ namespace FirstDraft
                             Log(message);
                             break;
 
-                        case "H":
+                        case "C":
                             var (_, healMagicMessage) = player.CastSpell("Cure", monster, player);
 
                             Log(healMagicMessage);
@@ -484,7 +506,7 @@ namespace FirstDraft
 
                         default:
                             Console.WriteLine("\nInput Error\n");
-                            break;
+                            continue;
                     }
 
                     /* ~~~~ Monster Attacks ~~~~ */
@@ -506,10 +528,12 @@ namespace FirstDraft
         {
             Console.WriteLine("\nWelcome to Void.");
 
-            Stats playerStats = new(29, 52, 35, 25);
+            // Stats playerStats = new(29, 52, 35, 25);
+            Stats playerStats = new(999999, 52, 35, 25);
             Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             Monster wolf = MonsterFactory.CreateMonster(2);
+            Monster wyvern = MonsterFactory.CreateMonster(3);
 
             // Test iterating through [KnownSpells]
             // foreach (Spell spell in player.KnownSpells)
@@ -526,6 +550,9 @@ namespace FirstDraft
 
 
             Game.Battle(player, bat);
+            // Game.Battle(player, wolf);
+            // Game.Battle(player, wyvern);
+
             // Game.ShowCombatLog();
 
             string logName = Game.GenerateLogFilename("Bat");
