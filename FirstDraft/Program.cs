@@ -4,6 +4,8 @@ using System.Dynamic;
 using System.Security;
 using System.IO;
 using System.Collections;
+using System.Reflection.Metadata.Ecma335;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace FirstDraft
 {
@@ -76,7 +78,7 @@ namespace FirstDraft
 
             // Every player begins with [Cure]
             KnownSpells.Add(SpellBook.Cure);
-            // KnownSpells.Add(SpellBook.Fire);
+            KnownSpells.Add(SpellBook.Fire);
         }
 
         public (int EffectValue, string Message) CastSpell(string spellName, Monster monster, Player player)
@@ -118,18 +120,35 @@ namespace FirstDraft
             }
         }
 
-        public string LearnSpell(int Level)
+        public string SelectSpell(string spellNumber, Player player, Monster monster)
         {
-            if (Level >= 2)
+            switch (spellNumber)
             {
-                KnownSpells.Add(SpellBook.Fire);
-                return
-                    "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
-                    $"\n{Name} learned [Fire]!\n" +
-                    "\n~~~~~~~~~~~~~~~~~~~~~~~~~";
+                case "1":
+                    var (_, healMagicMessage) = player.CastSpell("Cure", monster, player);
+                    return healMagicMessage;
+
+                case "2":
+                    var (_, damageMagicMessage) = player.CastSpell("Fire", monster, player);
+                    return damageMagicMessage;
+
+                default:
+                    return "Something went wrong in the [SelectSpell] method.";
             }
-            return "";
         }
+
+        // public string LearnSpell(int Level)
+        // {
+        //     if (Level >= 2)
+        //     {
+        //         KnownSpells.Add(SpellBook.Fire);
+        //         return
+        //             "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
+        //             $"\n{Name} learned [Fire]!\n" +
+        //             "\n~~~~~~~~~~~~~~~~~~~~~~~~~";
+        //     }
+        //     return "";
+        // }
 
         public string ExpUp(int exp)
         {
@@ -152,7 +171,7 @@ namespace FirstDraft
                 Experience -= ExpThreshold;
                 logMessage += LevelUp();
                 // logMessage += $"Previous EXP: {prevExp}, Current EXP: {Experience}\n";
-                logMessage += LearnSpell(Level);
+                // logMessage += LearnSpell(Level);
             }
             return logMessage;
         }
@@ -376,14 +395,14 @@ namespace FirstDraft
             string? choice;
             do
             {
-                Console.WriteLine("Attack (A), Defend (D), Fire (F), Cure (C), or Run (R)? ");
+                Console.WriteLine("Attack (A), Defend (D), Fire (F), Cure (C), Magic (M), or Run (R)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
-                if (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "R")
+                if (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "M" && choice != "R")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
-            } while (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "R");
+            } while (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "M" && choice != "R");
 
             return choice;
         }
@@ -466,12 +485,12 @@ namespace FirstDraft
                             break;
 
                         case "D":
-                            string message =
+                            string defendMessage =
                                 $"\n{player.Name} defends!\n" +
                                 $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
                                 $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
 
-                            Log(message);
+                            Log(defendMessage);
                             break;
 
                         case "C":
@@ -481,9 +500,9 @@ namespace FirstDraft
                             break;
 
                         case "F":
-                            var (_, magicDamageMessage) = player.CastSpell("Fire", monster, player);
+                            var (_, damageMagicMessage) = player.CastSpell("Fire", monster, player);
 
-                            Log(magicDamageMessage);
+                            Log(damageMagicMessage);
 
                             if (monster.CurrentHP <= 0)
                             {
@@ -492,6 +511,20 @@ namespace FirstDraft
 
                                 continue;
                             }
+                            break;
+
+                        case "M":
+                            Console.WriteLine();
+                            for (var i = 0; i < player.KnownSpells.Count; i++)
+                            {
+                                Console.WriteLine($"{player.KnownSpells[i].Name} ({i + 1})");
+                            }
+                            string spellSelection;
+                            Console.WriteLine("Select a Spell");
+                            spellSelection = Console.ReadLine() ?? "";
+
+                            Log(player.SelectSpell(spellSelection, player, monster));
+
                             break;
 
                         case "R":
@@ -538,13 +571,20 @@ namespace FirstDraft
             // Test iterating through [KnownSpells]
             // foreach (Spell spell in player.KnownSpells)
             // {
-            //     Console.WriteLine($"Spell (foreach): {spell.Name}");
+            //     Console.WriteLine($"Spell: {spell.Name}");
             // }
+
 
             // for (var i = 0; i < player.KnownSpells.Count; i++)
             // {
-            //     Console.WriteLine($"Spell (for): {player.KnownSpells[i].Name}");
+            //     // Console.WriteLine($"Spell: {player.KnownSpells[i].Name} ({i + 1})");
+            //     Console.WriteLine($"{player.KnownSpells[i].Name} ({i + 1})");
             // }
+
+            // string spellSelection;
+            // Console.WriteLine("Select a Spell");
+            // spellSelection = Console.ReadLine() ?? "";
+
 
             // Console.WriteLine($"Straight Print: {player.KnownSpells[0].Name}");
 
