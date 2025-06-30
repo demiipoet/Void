@@ -6,9 +6,42 @@ using System.IO;
 using System.Collections;
 using System.Reflection.Metadata.Ecma335;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 
 namespace FirstDraft
 {
+    /* ~~~~~~~~~~~~ Section: Story ~~~~~~~~~~~~ */
+    public class StoryNode
+    {
+        public string Id { get; }
+        public string Text { get; }
+        public List<StoryChoice> Choices { get; }
+
+        public StoryNode(string id, string text)
+        {
+            Id = id;
+            Text = text;
+            Choices = new List<StoryChoice>();
+        }
+
+        public void AddChoice(StoryChoice choice)
+        {
+            Choices.Add(choice);
+        }
+    }
+
+    public class StoryChoice
+    {
+        public string Description { get; }
+        public StoryNode NextNode { get; }
+
+        public StoryChoice(string description, StoryNode nextNode)
+        {
+            Description = description;
+            NextNode = nextNode;
+        }
+    }
+
     /* ~~~~~~~~~~~~ Section: MagicAttack ~~~~~~~~~~~~ */
     public enum SpellType
     {
@@ -428,6 +461,7 @@ namespace FirstDraft
         private static bool ResolveEnemyTurn(Player player, Monster monster, string playerChoice, Random rng)
         {
             bool isPlayerAlive = true;
+            // Update if we decicde to have [Monsters] use weapons and [Levels]
             int baseMonsterDamage = rng.Next(3, 9) + monster.BaseStats.Strength;
             int finalDamage = CombatCalculator.CalculatePhysicalDamageToPlayer(player, playerChoice, baseMonsterDamage);
             var (_, damageMessage) = player.TakePhysicalDamage(finalDamage, monster);
@@ -568,32 +602,52 @@ namespace FirstDraft
             Monster wolf = MonsterFactory.CreateMonster(2);
             Monster wyvern = MonsterFactory.CreateMonster(3);
 
-            // Test iterating through [KnownSpells]
-            // foreach (Spell spell in player.KnownSpells)
-            // {
-            //     Console.WriteLine($"Spell: {spell.Name}");
-            // }
-
-
-            // for (var i = 0; i < player.KnownSpells.Count; i++)
-            // {
-            //     // Console.WriteLine($"Spell: {player.KnownSpells[i].Name} ({i + 1})");
-            //     Console.WriteLine($"{player.KnownSpells[i].Name} ({i + 1})");
-            // }
-
-            // string spellSelection;
-            // Console.WriteLine("Select a Spell");
-            // spellSelection = Console.ReadLine() ?? "";
-
-
-            // Console.WriteLine($"Straight Print: {player.KnownSpells[0].Name}");
-
-
-            Game.Battle(player, bat);
+            // Game.Battle(player, bat);
             // Game.Battle(player, wolf);
             // Game.Battle(player, wyvern);
-
             // Game.ShowCombatLog();
+
+            var start = new StoryNode("start", "You find a creek you don't recognize.");
+            var approach = new StoryNode("d1.a", "You walk toward it and see a ford.");
+            var continueHiking = new StoryNode("d1.b", "You continue your hike.");
+            var fightBat = new StoryNode("battle", "Something flies toward you!");
+
+            start.AddChoice(new StoryChoice("Approach the creek", approach));
+            start.AddChoice(new StoryChoice("Keep hiking", continueHiking));
+            start.AddChoice(new StoryChoice("Whistle", fightBat));
+
+            StoryNode current = start;
+
+            while (current.Choices.Count > 0)
+            {
+                Console.WriteLine("\n" + current.Text + "\n");
+
+                for (int i = 0; i < current.Choices.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}: {current.Choices[i].Description}");
+                }
+
+                Console.Write("\nChoose an option: ");
+                string? input = Console.ReadLine();
+
+                if (int.TryParse(input, out int choiceNumber) &&
+                    choiceNumber >= 1 &&
+                    choiceNumber <= current.Choices.Count)
+                {
+                    current = current.Choices[choiceNumber - 1].NextNode;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid choice. Please try again.");
+                }
+            }
+
+            Console.WriteLine("\n" + current.Text);
+
+            Console.WriteLine(
+                "\n~~~~~~~~~\n" +
+                "\nThe End.\n" +
+                "\n~~~~~~~~\n");
 
             string logName = Game.GenerateLogFilename("Bat");
             Game.SaveCombatLog(logName);
