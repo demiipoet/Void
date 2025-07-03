@@ -1,0 +1,15 @@
+[
+    {
+        "Id": "start",
+        "Text": "You find a creek you don't recognize.",
+        "Choices": [
+            { "Description": "Keep hiking", "NextNodeId": "continueHiking" }
+        ]
+    },
+    {
+        "Id": "continueHiking",
+        "Text": "You continue your hike. Suddenly, it gets dark.",
+        "Choices": [
+        ]
+    }
+]

@@ -1,0 +1,19 @@
+[
+    {
+        "Id": "start",
+        "Text": "You find a creek you don't recognize.",
+        "Choices": [
+            { "Description": "Approach the creek", "NextNodeId": "fightWyvern" },
+            { "Description": "Keep hiking", "NextNodeId": "continueHiking" }
+        ]
+    },
+    {
+        "Id": "continueHiking",
+        "Text": "You continue your hike. Suddenly, it gets dark.",
+        "Choices": [
+            { "Description": "Turn on flashlight", "NextNodeId": "findSapphire" },
+            { "Description": "Don't turn on flashlight", "NextNodeId": "fightBat" }
+        ]
+    }
+]
+

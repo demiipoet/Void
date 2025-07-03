@@ -7,6 +7,8 @@ using System.Collections;
 using System.Reflection.Metadata.Ecma335;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
+using System.Text.Json;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FirstDraft
 {
@@ -39,6 +41,55 @@ namespace FirstDraft
         {
             Description = description;
             NextNode = nextNode;
+        }
+    }
+
+    public class RawStoryNode
+    {
+        public required string Id { get; set; }
+        public required string Text { get; set; }
+        public required List<RawStoryChoice> Choices { get; set; }
+    }
+
+    public class RawStoryChoice
+    {
+        public required string Description { get; set; }
+        public required string NextNodeId { get; set; }
+    }
+
+    public static class StoryLoader
+    {
+        public static Dictionary<string, StoryNode> LoadStoryFromJson(string filePath)
+        {
+            string json = File.ReadAllText(filePath);
+
+            var rawNodes = JsonSerializer.Deserialize<List<RawStoryNode>>(json)
+                                                ?? throw new Exception("Failed to load or parse story JSON.");
+
+            // First, convert [RawStoryNode] > [StoryNode] (empty choices fornow)
+            var nodeDict = new Dictionary<string, StoryNode>();
+            foreach (var raw in rawNodes)
+            {
+                nodeDict[raw.Id] = new StoryNode(raw.Id, raw.Text);
+            }
+
+            // Now wire up the choices
+            foreach (var raw in rawNodes)
+            {
+                var currentNode = nodeDict[raw.Id];
+                foreach (var rawChoice in raw.Choices)
+                {
+                    if (nodeDict.TryGetValue(rawChoice.NextNodeId, out var nextNode))
+                    {
+                        currentNode.AddChoice(new StoryChoice(rawChoice.Description, nextNode));
+                    }
+                    else
+                    {
+                        throw new Exception($"Invalid next node ID: {rawChoice.NextNodeId}");
+                    }
+                }
+            }
+            return nodeDict;
         }
     }
 
@@ -196,7 +247,7 @@ namespace FirstDraft
             int prevExp;
             Experience += exp;
             logMessage += $"Current EXP: {Experience}\n" +
-            "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+            "\n~~~~~~~~~~~~~~~~~~~~~~~~~";
 
             while (Experience >= ExpThreshold)
             {
@@ -426,16 +477,17 @@ namespace FirstDraft
         private static string GetPlayerChoice()
         {
             string? choice;
+
             do
             {
-                Console.WriteLine("Attack (A), Defend (D), Fire (F), Cure (C), Magic (M), or Run (R)? ");
+                Console.WriteLine("Attack (A), Defend (D), Magic (M), or Run (R)? ");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
                 if (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "M" && choice != "R")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
-            } while (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "M" && choice != "R");
+            } while (choice != "A" && choice != "D" && choice != "M" && choice != "R");
 
             return choice;
         }
@@ -527,25 +579,25 @@ namespace FirstDraft
                             Log(defendMessage);
                             break;
 
-                        case "C":
-                            var (_, healMagicMessage) = player.CastSpell("Cure", monster, player);
+                        // case "C":
+                        //     var (_, healMagicMessage) = player.CastSpell("Cure", monster, player);
 
-                            Log(healMagicMessage);
-                            break;
+                        //     Log(healMagicMessage);
+                        //     break;
 
-                        case "F":
-                            var (_, damageMagicMessage) = player.CastSpell("Fire", monster, player);
+                        // case "F":
+                        //     var (_, damageMagicMessage) = player.CastSpell("Fire", monster, player);
 
-                            Log(damageMagicMessage);
+                        //     Log(damageMagicMessage);
 
-                            if (monster.CurrentHP <= 0)
-                            {
-                                string killMonsterMessage = player.KillMonster(monster);
-                                Log(killMonsterMessage);
+                        //     if (monster.CurrentHP <= 0)
+                        //     {
+                        //         string killMonsterMessage = player.KillMonster(monster);
+                        //         Log(killMonsterMessage);
 
-                                continue;
-                            }
-                            break;
+                        //         continue;
+                        //     }
+                        //     break;
 
                         case "M":
                             Console.WriteLine();
@@ -607,15 +659,29 @@ namespace FirstDraft
             // Game.Battle(player, wyvern);
             // Game.ShowCombatLog();
 
+            var storyNodes = StoryLoader.LoadStoryFromJson("story.json");
+            var current = storyNodes["start"];
+
             var start = new StoryNode("start", "You find a creek you don't recognize.");
-            var approach = new StoryNode("d1.a", "You walk toward it and see a ford.");
-            var continueHiking = new StoryNode("d1.b", "You continue your hike.");
-            var fightBat = new StoryNode("battle", "Something flies toward you!");
+            var continueHiking = new StoryNode("continueHiking", "You continue your hike. Suddenly, it gets dark.");
+            var fightBat = new StoryNode("fightBat", "You live to fight another day. You approach two tunnels.");
+            var findSapphire = new StoryNode("findSapphire", "You find a cluster of blue sapphires, then feel a precense above and below you.");
+            var lookUp = new StoryNode("fightWolf", "You live to fight another day.");
+            var lookDown = new StoryNode("lookDown", "You see two fish swimming around your feet.");
+            var fightWyvern = new StoryNode("fightWyvern", "You live to fight another day.");
+            var deadEnd = new StoryNode("deadEnd", "Dead end!");
+            var light = new StoryNode("light", "You see a light in the distance.");
 
-            start.AddChoice(new StoryChoice("Approach the creek", approach));
+            start.AddChoice(new StoryChoice("Approach the creek", fightWyvern));
             start.AddChoice(new StoryChoice("Keep hiking", continueHiking));
-            start.AddChoice(new StoryChoice("Whistle", fightBat));
+            continueHiking.AddChoice(new StoryChoice("Turn on flashlight", findSapphire));
+            continueHiking.AddChoice(new StoryChoice("Don't turn on flashlight", fightBat));
+            findSapphire.AddChoice(new StoryChoice("Look up", lookUp));
+            findSapphire.AddChoice(new StoryChoice("Look down", lookDown));
+            fightBat.AddChoice(new StoryChoice("Take the left tunnel", deadEnd));
+            fightBat.AddChoice(new StoryChoice("Take the right tunnel", light));
 
+            /*
             StoryNode current = start;
 
             while (current.Choices.Count > 0)
@@ -635,6 +701,23 @@ namespace FirstDraft
                     choiceNumber <= current.Choices.Count)
                 {
                     current = current.Choices[choiceNumber - 1].NextNode;
+                    Console.WriteLine($"\n[current.Id]: {current.Id}");
+
+                    if (current.Id == "fightWyvern")
+                    {
+                        Console.WriteLine("\nYou hear the beating of wings...");
+                        Game.Battle(player, wyvern);
+                    }
+                    else if (current.Id == "fightBat")
+                    {
+                        Console.WriteLine("\nSomething flies toward you!");
+                        Game.Battle(player, bat);
+                    }
+                    else if (current.Id == "fightWolf")
+                    {
+                        Console.WriteLine("\nYou see glowing red eyes.");
+                        Game.Battle(player, wolf);
+                    }
                 }
                 else
                 {
@@ -642,15 +725,16 @@ namespace FirstDraft
                 }
             }
 
-            Console.WriteLine("\n" + current.Text);
-
+            Console.WriteLine($"\n {current.Text}");
             Console.WriteLine(
                 "\n~~~~~~~~~\n" +
                 "\nThe End.\n" +
                 "\n~~~~~~~~\n");
 
-            string logName = Game.GenerateLogFilename("Bat");
-            Game.SaveCombatLog(logName);
+            */
+
+            // string logName = Game.GenerateLogFilename("Bat");
+            // Game.SaveCombatLog(logName);
 
         }
     }
