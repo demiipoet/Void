@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using System.Text.Json;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
 
 namespace FirstDraft
 {
@@ -17,13 +18,19 @@ namespace FirstDraft
     {
         public string Id { get; }
         public string Text { get; }
+        public string? PreBattleText { get; }
         public List<StoryChoice> Choices { get; }
+        public bool IsEnding { get; }
+        public int? MonsterID { get; } // Nullable - not every node triggers a battle
 
-        public StoryNode(string id, string text)
+        public StoryNode(string id, string text, string? preBattleText = null, bool isEnding = false, int? monsterId = null)
         {
             Id = id;
             Text = text;
+            PreBattleText = preBattleText;
             Choices = new List<StoryChoice>();
+            IsEnding = isEnding;
+            MonsterID = monsterId;
         }
 
         public void AddChoice(StoryChoice choice)
@@ -41,55 +48,6 @@ namespace FirstDraft
         {
             Description = description;
             NextNode = nextNode;
-        }
-    }
-
-    public class RawStoryNode
-    {
-        public required string Id { get; set; }
-        public required string Text { get; set; }
-        public required List<RawStoryChoice> Choices { get; set; }
-    }
-
-    public class RawStoryChoice
-    {
-        public required string Description { get; set; }
-        public required string NextNodeId { get; set; }
-    }
-
-    public static class StoryLoader
-    {
-        public static Dictionary<string, StoryNode> LoadStoryFromJson(string filePath)
-        {
-            string json = File.ReadAllText(filePath);
-
-            var rawNodes = JsonSerializer.Deserialize<List<RawStoryNode>>(json)
-                                                ?? throw new Exception("Failed to load or parse story JSON.");
-
-            // First, convert [RawStoryNode] > [StoryNode] (empty choices fornow)
-            var nodeDict = new Dictionary<string, StoryNode>();
-            foreach (var raw in rawNodes)
-            {
-                nodeDict[raw.Id] = new StoryNode(raw.Id, raw.Text);
-            }
-
-            // Now wire up the choices
-            foreach (var raw in rawNodes)
-            {
-                var currentNode = nodeDict[raw.Id];
-                foreach (var rawChoice in raw.Choices)
-                {
-                    if (nodeDict.TryGetValue(rawChoice.NextNodeId, out var nextNode))
-                    {
-                        currentNode.AddChoice(new StoryChoice(rawChoice.Description, nextNode));
-                    }
-                    else
-                    {
-                        throw new Exception($"Invalid next node ID: {rawChoice.NextNodeId}");
-                    }
-                }
-            }
-            return nodeDict;
         }
     }
 
@@ -165,7 +123,7 @@ namespace FirstDraft
             KnownSpells.Add(SpellBook.Fire);
         }
 
-        public (int EffectValue, string Message) CastSpell(string spellName, Monster monster, Player player)
+        public (int EffectValue, string Message) CastSpell(string spellName, Player player, Monster monster)
         {
             var spell = KnownSpells.FirstOrDefault(s => s.Name == spellName);
             if (spell == null)
@@ -176,14 +134,13 @@ namespace FirstDraft
                 case SpellType.Heal:
                     double baseHealing = spell.SpellPower * 4;
                     double scalingHealing = Level * BaseStats.MagicAttack * 10.0 / 32;
-                    int finalHealAmount;
 
-                    if (CurrentHP == MaxHP)
-                        finalHealAmount = 0;
-                    else
-                        finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
+                    // if (CurrentHP == MaxHP)
+                    //     finalHealAmount = 0;
+                    // else
+                    //     finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
 
-                    finalHealAmount = Math.Max(0, finalHealAmount);
+                    int finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
                     CurrentHP = Math.Min(CurrentHP + finalHealAmount, MaxHP);
 
                     string healSpellMessage =
@@ -209,30 +166,17 @@ namespace FirstDraft
             switch (spellNumber)
             {
                 case "1":
-                    var (_, healMagicMessage) = player.CastSpell("Cure", monster, player);
+                    var (_, healMagicMessage) = player.CastSpell("Cure", player, monster);
                     return healMagicMessage;
 
                 case "2":
-                    var (_, damageMagicMessage) = player.CastSpell("Fire", monster, player);
+                    var (_, damageMagicMessage) = player.CastSpell("Fire", player, monster);
                     return damageMagicMessage;
 
                 default:
                     return "Something went wrong in the [SelectSpell] method.";
             }
         }
-
-        // public string LearnSpell(int Level)
-        // {
-        //     if (Level >= 2)
-        //     {
-        //         KnownSpells.Add(SpellBook.Fire);
-        //         return
-        //             "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
-        //             $"\n{Name} learned [Fire]!\n" +
-        //             "\n~~~~~~~~~~~~~~~~~~~~~~~~~";
-        //     }
-        //     return "";
-        // }
 
         public string ExpUp(int exp)
         {
@@ -336,7 +280,7 @@ namespace FirstDraft
             CurrentHP = Math.Max(CurrentHP - finalDamage, 0);
 
             string damageSpellMessage =
-                $"\n{Name} casts {spell.Name} for {finalDamage} damage!\n" +
+                $"\n{monster.Name} casts {spell.Name} for {finalDamage} damage!\n" +
                 $"{Name}'s HP: {CurrentHP}/{MaxHP}\n" +
                 $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
 
@@ -394,8 +338,8 @@ namespace FirstDraft
             CurrentHP = Math.Max(CurrentHP - finalDamage, 0);
 
             string damageSpellMessage =
-                $"\n{Name} casts {spell.Name} for {finalDamage} damage!\n" +
-                $"{player.Name}'s HP: {CurrentHP}/{MaxHP}\n" +
+                $"\n{player.Name} casts {spell.Name} for {finalDamage} damage!\n" +
+                $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
                 $"{Name}'s HP: {CurrentHP}/{MaxHP}\n";
 
             return (finalDamage, damageSpellMessage);
@@ -408,9 +352,9 @@ namespace FirstDraft
         public static Monster CreateMonster(int monsterID) =>
         monsterID switch
         {
-            1 => new("Bat", 150, 5, new Stats(5, 6, 7, 8)),
-            2 => new("Wolf", 150, 7, new Stats(6, 7, 8, 9)),
-            3 => new("Wyvern", 150, 9, new Stats(7, 8, 9, 10)),
+            1 => new("Bat", 150, 5, new Stats(999999, 6, 7, 8)),
+            2 => new("Wolf", 150, 7, new Stats(999999, 7, 8, 9)),
+            3 => new("Wyvern", 150, 9, new Stats(999999, 8, 9, 10)),
             _ => throw new ArgumentException("Invalid MonsterID")
         };
     }
@@ -480,14 +424,17 @@ namespace FirstDraft
 
             do
             {
-                Console.WriteLine("Attack (A), Defend (D), Magic (M), or Run (R)? ");
+                // Console.WriteLine("Attack (A), Defend (D), Magic (M), or Run (R)? ");
+                Console.WriteLine("Attack (A) | Defend (D) | Magic (M)");
                 choice = (Console.ReadLine() ?? "").ToUpper();
 
-                if (choice != "A" && choice != "D" && choice != "C" && choice != "F" && choice != "M" && choice != "R")
+                // if (choice != "A" && choice != "D" && choice != "M" && choice != "R")
+                if (choice != "A" && choice != "D" && choice != "M")
                 {
                     Console.WriteLine("\nInvalid choice!\n");
                 }
-            } while (choice != "A" && choice != "D" && choice != "M" && choice != "R");
+                // } while (choice != "A" && choice != "D" && choice != "M" && choice != "R");
+            } while (choice != "A" && choice != "D" && choice != "M");
 
             return choice;
         }
@@ -530,15 +477,16 @@ namespace FirstDraft
             return isPlayerAlive;
         }
 
-        public static void Battle(Player player, Monster monster)
+        public static bool Battle(Player player, Monster monster)
         {
+            bool isPlayerAlive = true;
             int turnNumber = 1;
             combatLog.Clear();
 
             if (player.CurrentHP > 0)
             {
                 Random rng = new();
-                bool run = false;
+                // bool run = false;
 
                 string battleStartMessage =
                 $"\nA wild {monster.Name} appears!\n" +
@@ -546,7 +494,9 @@ namespace FirstDraft
                 $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
 
                 Log(battleStartMessage);
-                while (player.CurrentHP > 0 && monster.CurrentHP > 0 && run == false)
+                // while (player.CurrentHP > 0 && monster.CurrentHP > 0 && run == false)
+                // while (player.CurrentHP > 0 && monster.CurrentHP > 0)
+                while (isPlayerAlive && monster.CurrentHP > 0)
                 {
                     /* ~~~~ Player Attacks ~~~~ */
                     Log($"\n--- Turn {turnNumber} ---");
@@ -579,33 +529,15 @@ namespace FirstDraft
                             Log(defendMessage);
                             break;
 
-                        // case "C":
-                        //     var (_, healMagicMessage) = player.CastSpell("Cure", monster, player);
-
-                        //     Log(healMagicMessage);
-                        //     break;
-
-                        // case "F":
-                        //     var (_, damageMagicMessage) = player.CastSpell("Fire", monster, player);
-
-                        //     Log(damageMagicMessage);
-
-                        //     if (monster.CurrentHP <= 0)
-                        //     {
-                        //         string killMonsterMessage = player.KillMonster(monster);
-                        //         Log(killMonsterMessage);
-
-                        //         continue;
-                        //     }
-                        //     break;
-
                         case "M":
                             Console.WriteLine();
+                            Console.WriteLine("----------");
                             for (var i = 0; i < player.KnownSpells.Count; i++)
                             {
                                 Console.WriteLine($"{player.KnownSpells[i].Name} ({i + 1})");
                             }
                             string spellSelection;
+                            Console.WriteLine("----------");
                             Console.WriteLine("Select a Spell");
                             spellSelection = Console.ReadLine() ?? "";
 
@@ -613,15 +545,15 @@ namespace FirstDraft
 
                             break;
 
-                        case "R":
-                            string runMessage =
-                            $"\n{player.Name} runs! \n" +
-                            player.ExpUp(0);
+                        // case "R":
+                        //     string runMessage =
+                        //     $"\n{player.Name} runs! \n" +
+                        //     player.ExpUp(0);
 
-                            Log(runMessage);
-                            run = true;
+                        //     Log(runMessage);
+                        //     run = true;
 
-                            continue;
+                        //     continue;
 
                         default:
                             Console.WriteLine("\nInput Error\n");
@@ -631,12 +563,13 @@ namespace FirstDraft
                     /* ~~~~ Monster Attacks ~~~~ */
                     if (monster.CurrentHP > 0)
                     {
-                        ResolveEnemyTurn(player, monster, processedBattleChoice, rng);
+                        isPlayerAlive = ResolveEnemyTurn(player, monster, processedBattleChoice, rng);
                     }
 
                     turnNumber++;
                 }
             }
+            return isPlayerAlive;
         }
     }
 
@@ -659,32 +592,12 @@ namespace FirstDraft
             // Game.Battle(player, wyvern);
             // Game.ShowCombatLog();
 
-            var storyNodes = StoryLoader.LoadStoryFromJson("story.json");
+            var storyNodes = StoryLoader.LoadStoryFromJson("FirstDraft/story.json");
             var current = storyNodes["start"];
+            bool isPlayerAlive = true;
+            // bool keepGoing = false;
 
-            var start = new StoryNode("start", "You find a creek you don't recognize.");
-            var continueHiking = new StoryNode("continueHiking", "You continue your hike. Suddenly, it gets dark.");
-            var fightBat = new StoryNode("fightBat", "You live to fight another day. You approach two tunnels.");
-            var findSapphire = new StoryNode("findSapphire", "You find a cluster of blue sapphires, then feel a precense above and below you.");
-            var lookUp = new StoryNode("fightWolf", "You live to fight another day.");
-            var lookDown = new StoryNode("lookDown", "You see two fish swimming around your feet.");
-            var fightWyvern = new StoryNode("fightWyvern", "You live to fight another day.");
-            var deadEnd = new StoryNode("deadEnd", "Dead end!");
-            var light = new StoryNode("light", "You see a light in the distance.");
-
-            start.AddChoice(new StoryChoice("Approach the creek", fightWyvern));
-            start.AddChoice(new StoryChoice("Keep hiking", continueHiking));
-            continueHiking.AddChoice(new StoryChoice("Turn on flashlight", findSapphire));
-            continueHiking.AddChoice(new StoryChoice("Don't turn on flashlight", fightBat));
-            findSapphire.AddChoice(new StoryChoice("Look up", lookUp));
-            findSapphire.AddChoice(new StoryChoice("Look down", lookDown));
-            fightBat.AddChoice(new StoryChoice("Take the left tunnel", deadEnd));
-            fightBat.AddChoice(new StoryChoice("Take the right tunnel", light));
-
-            /*
-            StoryNode current = start;
-
-            while (current.Choices.Count > 0)
+            while (!current.IsEnding)
             {
                 Console.WriteLine("\n" + current.Text + "\n");
 
@@ -702,36 +615,34 @@ namespace FirstDraft
                 {
                     current = current.Choices[choiceNumber - 1].NextNode;
                     Console.WriteLine($"\n[current.Id]: {current.Id}");
+                    Console.WriteLine($"[IsEnding]: {current.IsEnding}");
 
-                    if (current.Id == "fightWyvern")
+                    if (current.MonsterID.HasValue)
                     {
-                        Console.WriteLine("\nYou hear the beating of wings...");
-                        Game.Battle(player, wyvern);
-                    }
-                    else if (current.Id == "fightBat")
-                    {
-                        Console.WriteLine("\nSomething flies toward you!");
-                        Game.Battle(player, bat);
-                    }
-                    else if (current.Id == "fightWolf")
-                    {
-                        Console.WriteLine("\nYou see glowing red eyes.");
-                        Game.Battle(player, wolf);
+                        Console.WriteLine("In [Battle] if statement\n");
+                        if (current.PreBattleText != null)
+                        {
+                            Console.WriteLine(current.PreBattleText);
+                        }
+                        var monster = MonsterFactory.CreateMonster(current.MonsterID.Value);
+                        isPlayerAlive = Game.Battle(player, monster);
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Invalid choice. Please try again.");
+                    Console.WriteLine("\nInvalid choice. Please try again.");
                 }
             }
 
-            Console.WriteLine($"\n {current.Text}");
+            if (isPlayerAlive)
+            {
+                Console.WriteLine("\nIn final if statement");
+                Console.WriteLine($"\n{current.Text}");
+            }
             Console.WriteLine(
                 "\n~~~~~~~~~\n" +
                 "\nThe End.\n" +
                 "\n~~~~~~~~\n");
-
-            */
 
             // string logName = Game.GenerateLogFilename("Bat");
             // Game.SaveCombatLog(logName);

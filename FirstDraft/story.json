@@ -1,0 +1,98 @@
+[
+    {
+        "Id": "start",
+        "Text": "Freya finds a creek she doesn't recognize.",
+        "IsEnding": false,
+        "Choices": [
+            {
+                "Description": "Approach the creek",
+                "NextNodeId": "fightWyvern"
+            },
+            {
+                "Description": "Keep hiking",
+                "NextNodeId": "continueHiking"
+            }
+        ]
+    },
+    {
+        "Id": "continueHiking",
+        "Text": "Freya continues her hike. Suddenly, it gets dark.",
+        "IsEnding": false,
+        "Choices": [
+            {
+                "Description": "Turn on flashlight",
+                "NextNodeId": "findSapphire"
+            },
+            {
+                "Description": "Don't turn on flashlight",
+                "NextNodeId": "fightBat"
+            }
+        ]
+    },
+    {
+        "Id": "fightBat",
+        "Text": "Freya lives to fight another day. She then approaches two tunnels.",
+        "PreBattleText": "Something flies toward Freya!",
+        "IsEnding": false,
+        "MonsterID": 1,
+        "Choices": [
+            {
+                "Description": "Take the left tunnel",
+                "NextNodeId": "deadEnd"
+            },
+            {
+                "Description": "Take the right tunnel",
+                "NextNodeId": "light"
+            }
+        ]
+    },
+    {
+        "Id": "findSapphire",
+        "Text": "Freya finds a cluster of blue sapphires, then feels a precense above and below her.",
+        "IsEnding": false,
+        "Choices": [
+            {
+                "Description": "Look up",
+                "NextNodeId": "fightWolf"
+            },
+            {
+                "Description": "Look down",
+                "NextNodeId": "lookDown"
+            }
+        ]
+    },
+    {
+        "Id": "fightWolf",
+        "Text": "Freya lives to fight another day.",
+        "PreBattleText": "Freya sees glowing red eyes.",
+        "IsEnding": true,
+        "MonsterID": 2,
+        "Choices": []
+    },
+    {
+        "Id": "lookDown",
+        "Text": "Freya sees two fish swimming around her feet.",
+        "IsEnding": true,
+        "Choices": []
+    },
+    {
+        "Id": "fightWyvern",
+        "Text": "Freya lives to fight another day.",
+        "PreBattleText": "Freya hears the beating of wings.",
+        "IsEnding": true,
+        "MonsterID": 3,
+        "Choices": []
+    },
+    {
+        "Id": "light",
+        "Text": "Freya sees a light in the distance.",
+        "IsEnding": true,
+        "Choices": []
+    },
+    {
+        "Id": "deadEnd",
+        "Text": "Your vision fades. Everything goes dark.",
+        "IsEnding": true,
+        "Choices": []
+    }
+]
