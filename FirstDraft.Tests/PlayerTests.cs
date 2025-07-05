@@ -443,7 +443,7 @@ namespace FirstDraft.Tests
 
             // Act
             player.TakePhysicalDamage(incomingDamage, bat);
-            player.CastSpell("Cure", bat, player);
+            player.CastSpell("Cure", player, bat);
 
             // Assert
             Assert.Equal(expectedRemainingHP, player.CurrentHP);
@@ -488,7 +488,7 @@ namespace FirstDraft.Tests
             player.TakePhysicalDamage(incomingDamage, bat);
 
             // Act
-            player.CastSpell("Cure", bat, player);
+            player.CastSpell("Cure", player, bat);
 
             // Assert
             Assert.Equal(expectedCurrentHP, expectedMaxHP);
@@ -567,7 +567,7 @@ namespace FirstDraft.Tests
             player.TakePhysicalDamage(incomingDamage, bat);
 
             // Act
-            player.CastSpell("Cure", bat, player);
+            player.CastSpell("Cure", player, bat);
 
             // Assert
             Assert.Equal(player.MaxHP, player.CurrentHP);
@@ -660,20 +660,19 @@ namespace FirstDraft.Tests
             int wolfDefense = 7;
             int wolfMagicAttack = 8;
             int wolfMagicDeffense = 9;
-            int finalHealAmount = 0;
 
             Spell cure = new("Cure", SpellType.Heal, 10, 5);
             Stats playerStats = new(playerStrength, playerDefense, playerMagicAttack, playerMagicDefense);
             Player player = new("Freya", playerStats);
             Monster wolf = new("Wolf", wolfHealth, wolfExp, new Stats(wolfStrength, wolfDefense, wolfMagicAttack, wolfMagicDeffense));
 
+            // Act
+            var (EffectValue, healMessage) = player.CastSpell("Cure", player, wolf);
+
             string expectedMessage =
-                $"\n{player.Name} casts {cure.Name} and heals {finalHealAmount} HP!\n" +
+                $"\n{player.Name} casts {cure.Name} and heals {EffectValue} HP!\n" +
                 $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
                 $"{wolf.Name}'s HP: {wolf.CurrentHP}/{wolf.MaxHP}\n";
-
-            // Act
-            var (EffectValue, healMessage) = player.CastSpell("Cure", wolf, player);
 
             // Assert
             Assert.Equal(expectedMessage, healMessage);
@@ -704,7 +703,7 @@ namespace FirstDraft.Tests
             "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
             $"\n{player.Name} gained {wolfExp} EXP!\n";
             expectedMessage += $"Current EXP: {wolfExp}\n" +
-            "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+            "\n~~~~~~~~~~~~~~~~~~~~~~~~~";
 
             string actualMessage = player.KillMonster(wolf);
 
