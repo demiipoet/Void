@@ -210,3 +210,4 @@
 /Users/dawn/coding_projects/Void/FirstDraft.Tests/obj/Debug/net9.0/FirstDra.566A5590.Up2Date
 /Users/dawn/coding_projects/Void/FirstDraft.Tests/obj/Debug/net9.0/FirstDraft.Tests.genruntimeconfig.cache
 /Users/dawn/coding_projects/Void/FirstDraft.Tests/obj/Debug/net9.0/ref/FirstDraft.Tests.dll
+/Users/dawn/coding_projects/Void/FirstDraft.Tests/bin/Debug/net9.0/story.json

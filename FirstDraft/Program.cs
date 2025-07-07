@@ -354,7 +354,7 @@ namespace FirstDraft
         {
             1 => new("Bat", 150, 5, new Stats(5, 6, 7, 8)),
             2 => new("Wolf", 150, 7, new Stats(6, 7, 8, 9)),
-            3 => new("Wyvern", 150, 9, new Stats(7, 8, 9, 10)),
+            3 => new("Wyvern", 150, 9, new Stats(999999, 8, 9, 10)),
             _ => throw new ArgumentException("Invalid MonsterID")
         };
     }
