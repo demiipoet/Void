@@ -21,7 +21,7 @@
         "Choices": [
             {
                 "Description": "Turn on flashlight",
-                "NextNodeId": "findSapphire"
+                "NextNodeId": "findSapphires"
             },
             {
                 "Description": "Don't turn on flashlight",
@@ -47,7 +47,7 @@
         ]
     },
     {
-        "Id": "findSapphire",
+        "Id": "findSapphires",
         "Text": "Freya finds a cluster of blue sapphires, then feels a precense above and below her.",
         "IsEnding": false,
         "Choices": [
