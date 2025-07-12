@@ -50,7 +50,7 @@ cd Void
 - **Run Unit Tests:** `dotnet test FirstDraft.Tests`
 
 ### Example Output
-![Void Turn-Based Combat Demo](https://github.com/demiipoet/Void/blob/main/demo/updated_combat_demo.gif)
+![Void Turn-Based Combat Demo](https://github.com/demiipoet/Void/blob/main/demo/void_demo.gif)
 
 ---
 
