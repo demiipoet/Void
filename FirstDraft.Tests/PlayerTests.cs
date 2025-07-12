@@ -188,7 +188,7 @@ namespace FirstDraft.Tests
             int expectedPlayerLevel = 2;
 
             // Act
-            player.KillMonster(wyvern); // Gives 10 [Exp], enough to level up from 1 to 2 with 5 leftover
+            player.KillMonster(wyvern);
 
             // Assert
             Assert.Equal(expectedPlayerLevel, player.Level);
@@ -496,7 +496,7 @@ namespace FirstDraft.Tests
             var (finalDamage, damageMessage) = player.TakePhysicalDamage(incomingDamage, wolf);
 
             string expectedMessage =
-            $"{wolf.Name} attacks {player.Name} for {finalDamage} damage!\n" +
+            $"\n{wolf.Name} attacks {player.Name} for {finalDamage} damage!\n" +
             $"{player.Name}'s HP: {player.CurrentHP}/{player.MaxHP}\n" +
             $"{wolf.Name}'s HP: {wolf.CurrentHP}/{wolf.MaxHP}";
 
@@ -537,8 +537,8 @@ namespace FirstDraft.Tests
             string expectedMessage = $"{player.Name} defeated {wolf.Name}!\n";
             expectedMessage +=
             "\n~~~~~~~~~~~~~~~~~~~~~~~~~\n" +
-            $"\n{player.Name} gained 8 EXP!\n";
-            expectedMessage += $"Current EXP: 8\n" +
+            $"\n{player.Name} gained 7 EXP!\n";
+            expectedMessage += $"Current EXP: 7\n" +
             "\n~~~~~~~~~~~~~~~~~~~~~~~~~";
 
             string actualMessage = player.KillMonster(wolf);

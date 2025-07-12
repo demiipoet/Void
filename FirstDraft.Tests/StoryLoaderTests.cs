@@ -35,7 +35,7 @@ public class StoryLoaderTests
         var end2 = storyNodes["light"];
 
         // Assert
-        Assert.Equal("Freya finds a creek she doesn't recognize.", start.Text);
+        Assert.Equal("Freya finds a creek she doesn't recognize.", start.MainText);
         Assert.Equal(2, start.Choices.Count);
         Assert.True(end1.IsEnding);
         Assert.True(end2.IsEnding);
@@ -53,7 +53,7 @@ public class StoryLoaderTests
         current = current.Choices[0].NextNode;
 
         // Assert
-        Assert.Equal("fightWyvern", current.Id);
+        Assert.Equal("fightWolf", current.Id);
         Assert.True(current.IsEnding);
     }
 
@@ -69,7 +69,7 @@ public class StoryLoaderTests
         // Assert
         Assert.Equal("deadEnd", finalNode.Id);
         Assert.True(finalNode.IsEnding);
-        Assert.Equal("Your vision fades. Everything goes dark.", finalNode.Text);
+        Assert.Equal("There's nothing here but a solid wall.", finalNode.MainText);
     }
 
     [Fact]
@@ -82,9 +82,9 @@ public class StoryLoaderTests
         var finalNode = TraversePath(story, "start", 0);
 
         // Assert
-        Assert.Equal("fightWyvern", finalNode.Id);
+        Assert.Equal("fightWolf", finalNode.Id);
         Assert.True(finalNode.IsEnding);
-        Assert.Equal("Freya lives to fight another day.", finalNode.Text);
+        Assert.Equal("Freya lives to fight another day.", finalNode.MainText);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class StoryLoaderTests
         // Assert
         Assert.Equal("light", finalNode.Id);
         Assert.True(finalNode.IsEnding);
-        Assert.Equal("Freya sees a light in the distance.", finalNode.Text);
+        Assert.Equal("Freya sees a light in the distance.", finalNode.MainText);
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public class StoryLoaderTests
         // Assert
         Assert.Equal("findSapphires", finalNode.Id);
         Assert.False(finalNode.IsEnding);
-        Assert.Equal("Freya finds a cluster of blue sapphires, then feels a precense above and below her.", finalNode.Text);
+        Assert.Equal("Freya finds a cluster of blue sapphires, then feels a presence above and below her...", finalNode.MainText);
     }
 
 }

@@ -5,7 +5,7 @@ namespace FirstDraft
     public class RawStoryNode
     {
         public required string Id { get; set; }
-        public required string Text { get; set; }
+        public required string MainText { get; set; }
         public string? PreBattleText { get; set; }
         public required List<RawStoryChoice> Choices { get; set; }
         public bool IsEnding { get; set; } = false;
@@ -31,7 +31,7 @@ namespace FirstDraft
             var nodeDict = new Dictionary<string, StoryNode>();
             foreach (var raw in rawNodes)
             {
-                nodeDict[raw.Id] = new StoryNode(raw.Id, raw.Text, raw.PreBattleText, raw.IsEnding, raw.MonsterID);
+                nodeDict[raw.Id] = new StoryNode(raw.Id, raw.MainText, raw.PreBattleText, raw.IsEnding, raw.MonsterID);
             }
 
             // Now wire up the choices

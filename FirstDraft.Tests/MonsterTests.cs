@@ -27,6 +27,7 @@ namespace FirstDraft.Tests
         {
             return MonsterFactory.CreateMonster(3);
         }
+
         /* ~~~~~~~~~~~ Section: Monster Factory ~~~~~~~~~~~ */
         [Fact]
         public void MonsterCreateMonster_CreateMonsterInstance_Correctly()
@@ -35,11 +36,11 @@ namespace FirstDraft.Tests
             int wolfMonsterID = 2;
             int expectedMaxHP = 150;
             int expectedCurrentHP = 150;
-            int expectedExpGiven = 8;
+            int expectedExpGiven = 7;
             Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
 
             // Assert
-            Assert.Equal("[Monster] Wolf", wolf.Name);
+            Assert.Equal("Wolf", wolf.Name);
             Assert.Equal(expectedMaxHP, wolf.MaxHP);
             Assert.Equal(expectedCurrentHP, wolf.CurrentHP);
             Assert.Equal(expectedExpGiven, wolf.ExpGiven);
@@ -66,7 +67,6 @@ namespace FirstDraft.Tests
             // Assert
             Assert.Equal("Invalid MonsterID", exception.Message);
         }
-
 
         /* ~~~~~~~~~~~ Section: Damage ~~~~~~~~~~~ */
         [Fact]
@@ -152,9 +152,7 @@ namespace FirstDraft.Tests
             Assert.Equal(expectedRemainingHP, wolf.CurrentHP);
         }
 
-
         /* ~~~~~~~~~~~ Section: HP ~~~~~~~~~~~ */
-
         [Fact]
         public void Monster_CreateInstance_CurrentHPMatchesMaxHP()
         {
@@ -206,7 +204,7 @@ namespace FirstDraft.Tests
             // Arrange
             Player player = CreateTestPlayer();
             Monster wolf = CreateTestWolf();
-            int expectedExpGiven = 8;
+            int expectedExpGiven = 7;
 
             // Act
             player.KillMonster(wolf);
@@ -226,7 +224,7 @@ namespace FirstDraft.Tests
             Monster wolf = MonsterFactory.CreateMonster(wolfMonsterID);
 
             // Assert
-            Assert.StartsWith("[Monster]", wolf.Name);
+            Assert.StartsWith("Wolf", wolf.Name);
         }
     }
 }
