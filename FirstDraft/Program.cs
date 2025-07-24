@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using System.Text.Json;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Interfaces;
+using System.Net;
 
 namespace FirstDraft
 {
@@ -51,7 +52,7 @@ namespace FirstDraft
         }
     }
 
-    /* ~~~~~~~~~~~~ Section: MagicAttack ~~~~~~~~~~~~ */
+    /* ~~~~~~~~~~~~ Section: Magic ~~~~~~~~~~~~ */
     public enum SpellType
     {
         Heal,
@@ -74,17 +75,19 @@ namespace FirstDraft
     {
         public static readonly Spell Cure = new("Cure", SpellType.Heal, 10, 5);
         public static readonly Spell Fire = new("Fire", SpellType.Damage, 12, 4);
-        public static readonly Spell Protect = new("Protect", SpellType.Buff, 0, 6);
+        public static readonly Spell Haste = new("Haste", SpellType.Buff, 0, 6);
         public static readonly Spell Slow = new("Slow", SpellType.Debuff, 0, 7);
 
+        // ???? What is this for ????
         public static readonly Dictionary<string, Spell> AllSpells = new()
         {
             { Cure.Name, Cure },
             { Fire.Name, Fire },
-            { Protect.Name, Protect },
+            { Haste.Name, Haste },
             { Slow.Name, Slow }
         };
     }
+
 
     /* ~~~~~~~~~~~~ Section: Stats ~~~~~~~~~~~~ */
     public class Stats(int strength, int defense, int magicAttack, int magicDefense)
@@ -95,6 +98,15 @@ namespace FirstDraft
         public int MagicDefense { get; set; } = magicDefense;
     }
 
+    /* ~~~~~~~~~~~~ Section: Status Effects ~~~~~~~~~~~~ */
+    public class AllStatusEffects()
+    {
+        public bool Haste { get; set; } = false;
+        public bool Protect { get; set; } = false;
+        public bool Slow { get; set; } = false;
+        public bool Stop { get; set; } = false;
+    }
+
     /* ~~~~~~~~~~~~ Section: Player ~~~~~~~~~~~~ */
     public class Player
     {
@@ -103,22 +115,26 @@ namespace FirstDraft
         public int MaxHP { get; private set; }
         public int CurrentHP { get; private set; }
         public Stats BaseStats { get; private set; }
+        public AllStatusEffects StatusEffects { get; private set; }
         public int Experience { get; private set; }
         public List<Spell> KnownSpells { get; } = [];
         private int ExpThreshold => Level * 10;
 
-        public Player(string name, Stats baseStats, int maxHP = 300)
+        public Player(string name, Stats baseStats, AllStatusEffects statusEffects, int maxHP = 300)
         {
             Name = $"{name}";
             Level = 1;
             MaxHP = maxHP;
             CurrentHP = maxHP;
             BaseStats = baseStats;
+            StatusEffects = statusEffects;
             Experience = 0;
 
-            // Every player begins with [Cure]
             KnownSpells.Add(SpellBook.Cure);
             KnownSpells.Add(SpellBook.Fire);
+            KnownSpells.Add(SpellBook.Haste);
+            KnownSpells.Add(SpellBook.Slow);
+
         }
 
         public (int EffectValue, string Message) CastSpell(string spellName, Player player, Monster monster)
@@ -132,13 +148,8 @@ namespace FirstDraft
                 case SpellType.Heal:
                     double baseHealing = spell.SpellPower * 4;
                     double scalingHealing = Level * BaseStats.MagicAttack * 10.0 / 32;
-
-                    // if (CurrentHP == MaxHP)
-                    //     finalHealAmount = 0;
-                    // else
-                    //     finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
-
                     int finalHealAmount = (int)Math.Round(baseHealing + scalingHealing);
+
                     CurrentHP = Math.Min(CurrentHP + finalHealAmount, MaxHP);
 
                     string healSpellMessage =
@@ -153,6 +164,17 @@ namespace FirstDraft
                     var (returnSpellDamage, returnSpellMessage) = monster.TakeMagicDamage(spell, spellDamage, player);
 
                     return (returnSpellDamage, returnSpellMessage);
+
+                case SpellType.Buff:
+                    switch (spell.Name)
+                    {
+                        case "Haste":
+                            StatusEffects.Haste = true;
+                            return (0, $"{Name} casts {spell.Name}!");
+
+                        default:
+                            return (0, "Something went wrong in [switch (spell.Name)]");
+                    }
 
                 default:
                     return (0, $"(Error) Spell type not implemented.");
@@ -170,9 +192,6 @@ namespace FirstDraft
                 case "2":
                     var (_, damageMagicMessage) = player.CastSpell("Fire", player, monster);
                     return damageMagicMessage;
-
-                // case "c":
-                //     return "c";
 
                 default:
                     return "\nSomething went wrong in the [SelectSpell] method.";
@@ -298,7 +317,7 @@ namespace FirstDraft
     }
 
     /* ~~~~~~~~~~~~ Section: Monster ~~~~~~~~~~~~ */
-    public class Monster(string name, int maxHP, int expGiven, Stats baseStats)
+    public class Monster(string name, int maxHP, int expGiven, Stats baseStats, AllStatusEffects statusEffects)
     {
         // public string? Name { get; } = $"[Monster] {name}";
         public string? Name { get; } = $"{name}";
@@ -306,6 +325,7 @@ namespace FirstDraft
         public int CurrentHP { get; private set; } = maxHP;
         public int ExpGiven { get; } = expGiven;
         public Stats BaseStats { get; private set; } = baseStats;
+        public AllStatusEffects StatusEffects { get; private set; } = statusEffects;
 
         public (int FinalDamage, string Message) TakePhysicalDamage(int incomingDamage, Player player)
         {
@@ -354,9 +374,9 @@ namespace FirstDraft
         public static Monster CreateMonster(int monsterID) =>
         monsterID switch
         {
-            1 => new("Bat", 150, 5, new Stats(5, 6, 7, 8)),
-            2 => new("Wolf", 150, 7, new Stats(6, 7, 8, 9)),
-            3 => new("Wyvern", 150, 10, new Stats(7, 8, 9, 10)),
+            1 => new("Bat", 150, 5, new Stats(5, 6, 7, 8), new AllStatusEffects()),
+            2 => new("Wolf", 150, 7, new Stats(6, 7, 8, 9), new AllStatusEffects()),
+            3 => new("Wyvern", 150, 10, new Stats(7, 8, 9, 10), new AllStatusEffects()),
             _ => throw new ArgumentException("Invalid MonsterID")
         };
     }
@@ -550,21 +570,16 @@ namespace FirstDraft
                             break;
 
                         case "M":
-                            // Console.WriteLine();
-                            // Console.WriteLine("----------");
                             Log("");
                             Log("----------");
                             for (var i = 0; i < player.KnownSpells.Count; i++)
                             {
-                                // Console.WriteLine($"({i + 1}) {player.KnownSpells[i].Name}");
                                 Log($"({i + 1}) {player.KnownSpells[i].Name}");
                             }
                             Log("\n(C) Cancel");
-                            // Console.WriteLine("----------");
-                            // Console.WriteLine("Select a Spell");
                             Log("----------");
                             Log("Select a Spell");
-                            // string cancel = Console.ReadLine() ?? "";
+
                             string? spellSelection = (Console.ReadLine() ?? "").ToUpper();
                             SilentLog(spellSelection);
 
@@ -574,9 +589,6 @@ namespace FirstDraft
                                 cancel = true;
                                 continue;
                             }
-
-                            // if (cancel == true)
-                            //     continue;
 
                             Log(player.SelectSpell(spellSelection, player, monster));
 
@@ -593,7 +605,6 @@ namespace FirstDraft
                             continue;
 
                         default:
-                            // Console.WriteLine("\nInput Error\n");
                             Log("\nInput Error\n");
                             continue;
                     }
@@ -621,16 +632,48 @@ namespace FirstDraft
 
             // Stats playerStats = new(29, 52, 35, 25);
             Stats playerStats = new(100, 52, 100, 25);
-            Player player = new("Freya", playerStats);
+            AllStatusEffects statusEffects = new();
+            Player player = new("Freya", playerStats, statusEffects);
             Monster bat = MonsterFactory.CreateMonster(1);
             Monster wolf = MonsterFactory.CreateMonster(2);
             Monster wyvern = MonsterFactory.CreateMonster(3);
 
-            // Game.Battle(player, bat);
+            /*
+            Console.WriteLine($"[player.StatusEffects.Slow]: {player.StatusEffects.Slow}");
+            Console.WriteLine($"[player.StatusEffects.Stop]: {player.StatusEffects.Stop}");
+            Console.WriteLine($"[player.StatusEffects.Haste]: {player.StatusEffects.Haste}");
+            Console.WriteLine($"[player.StatusEffects.Protect]: {player.StatusEffects.Protect}");
+            Console.WriteLine();
+            Console.WriteLine($"[bat.StatusEffects.Slow]: {bat.StatusEffects.Slow}");
+            Console.WriteLine($"[bat.StatusEffects.Stop]: {bat.StatusEffects.Stop}");
+            Console.WriteLine($"[bat.StatusEffects.Haste]: {bat.StatusEffects.Haste}");
+            Console.WriteLine($"[bat.StatusEffects.Protect]: {bat.StatusEffects.Protect}");
+            Console.WriteLine();
+
+            player.StatusEffects.Slow = true;
+            player.StatusEffects.Haste = true;
+            bat.StatusEffects.Stop = true;
+            bat.StatusEffects.Protect = true;
+
+            Console.WriteLine($"[player.StatusEffects.Slow]: {player.StatusEffects.Slow}");
+            Console.WriteLine($"[player.StatusEffects.Stop]: {player.StatusEffects.Stop}");
+            Console.WriteLine($"[player.StatusEffects.Haste]: {player.StatusEffects.Haste}");
+            Console.WriteLine($"[player.StatusEffects.Protect]: {player.StatusEffects.Protect}");
+            Console.WriteLine();
+            Console.WriteLine($"[bat.StatusEffects.Slow]: {bat.StatusEffects.Slow}");
+            Console.WriteLine($"[bat.StatusEffects.Stop]: {bat.StatusEffects.Stop}");
+            Console.WriteLine($"[bat.StatusEffects.Haste]: {bat.StatusEffects.Haste}");
+            Console.WriteLine($"[bat.StatusEffects.Protect]: {bat.StatusEffects.Protect}");
+            Console.WriteLine();
+
+            */
+
+            // Game.Battle(bat, bat);
             // Game.Battle(player, wolf);
             // Game.Battle(player, wyvern);
             // Game.ShowGameLog();
 
+            /*
             var storyNodes = StoryLoader.LoadStoryFromJson("Story/story.json");
             var current = storyNodes["start"];
             bool isPlayerAlive = true;
@@ -693,6 +736,8 @@ namespace FirstDraft
 
             string logName = Game.GenerateLogFilename("CYOA");
             Game.SaveGameLog(logName);
+
+            */
 
         }
     }
