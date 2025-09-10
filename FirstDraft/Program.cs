@@ -99,11 +99,19 @@ namespace FirstDraft
     }
 
     /* ~~~~~~~~~~~~ Section: Status Effects ~~~~~~~~~~~~ */
-    public class AllStatusEffects()
+    public class AllStatusEffects
     {
-        public bool Haste { get; set; } = false;
+        // public bool Haste { get; set; } = false;
+
+        // Remaining number of rounds [Haste] is active for
+        public int HasteRoundsRemaining { get; set; } = 0;
+        // Number of extra turns ([Player] or [Monster])
+        public int ExtraTurnsPending { get; set; } = 0;
+
         public bool Protect { get; set; } = false;
         public bool Slow { get; set; } = false;
+        // Would [Player] win if [Monster] is [Stop]ped? Is this like [Petrify]?
+        // If not, what'd be the difference between [Stop] and [Slow]?
         public bool Stop { get; set; } = false;
     }
 
@@ -115,19 +123,19 @@ namespace FirstDraft
         public int MaxHP { get; private set; }
         public int CurrentHP { get; private set; }
         public Stats BaseStats { get; private set; }
-        public AllStatusEffects StatusEffects { get; private set; }
+        public AllStatusEffects StatusEffects { get; private set; } = new AllStatusEffects();
         public int Experience { get; private set; }
         public List<Spell> KnownSpells { get; } = [];
         private int ExpThreshold => Level * 10;
 
-        public Player(string name, Stats baseStats, AllStatusEffects statusEffects, int maxHP = 300)
+        public Player(string name, Stats baseStats, int maxHP = 300)
         {
             Name = $"{name}";
             Level = 1;
             MaxHP = maxHP;
             CurrentHP = maxHP;
             BaseStats = baseStats;
-            StatusEffects = statusEffects;
+            // StatusEffects = statusEffects;
             Experience = 0;
 
             KnownSpells.Add(SpellBook.Cure);
@@ -169,8 +177,15 @@ namespace FirstDraft
                     switch (spell.Name)
                     {
                         case "Haste":
-                            StatusEffects.Haste = true;
-                            return (0, $"{Name} casts {spell.Name}!");
+                            string buffSpellMessage = $"\n{Name} casts {spell.Name}!\n";
+
+                            // Don't think we need this anymore since we're using [HasteRoundsRemaining] and [ExtraTurnsPending]
+                            // player.StatusEffects.Haste = true;
+
+                            // #### Does this belong here? ####
+                            player.StatusEffects.HasteRoundsRemaining = 3;
+
+                            return (0, buffSpellMessage);
 
                         default:
                             return (0, "Something went wrong in [switch (spell.Name)]");
@@ -193,8 +208,12 @@ namespace FirstDraft
                     var (_, damageMagicMessage) = player.CastSpell("Fire", player, monster);
                     return damageMagicMessage;
 
+                case "3":
+                    var (_, buffMagicMessage) = player.CastSpell("Haste", player, monster);
+                    return buffMagicMessage;
+
                 default:
-                    return "\nSomething went wrong in the [SelectSpell] method.";
+                    return "\nSomething went wrong in the [SelectSpell] method.\n";
             }
         }
 
@@ -317,7 +336,7 @@ namespace FirstDraft
     }
 
     /* ~~~~~~~~~~~~ Section: Monster ~~~~~~~~~~~~ */
-    public class Monster(string name, int maxHP, int expGiven, Stats baseStats, AllStatusEffects statusEffects)
+    public class Monster(string name, int maxHP, int expGiven, Stats baseStats)
     {
         // public string? Name { get; } = $"[Monster] {name}";
         public string? Name { get; } = $"{name}";
@@ -325,7 +344,7 @@ namespace FirstDraft
         public int CurrentHP { get; private set; } = maxHP;
         public int ExpGiven { get; } = expGiven;
         public Stats BaseStats { get; private set; } = baseStats;
-        public AllStatusEffects StatusEffects { get; private set; } = statusEffects;
+        public AllStatusEffects StatusEffects { get; private set; } = new AllStatusEffects();
 
         public (int FinalDamage, string Message) TakePhysicalDamage(int incomingDamage, Player player)
         {
@@ -374,9 +393,9 @@ namespace FirstDraft
         public static Monster CreateMonster(int monsterID) =>
         monsterID switch
         {
-            1 => new("Bat", 150, 5, new Stats(5, 6, 7, 8), new AllStatusEffects()),
-            2 => new("Wolf", 150, 7, new Stats(6, 7, 8, 9), new AllStatusEffects()),
-            3 => new("Wyvern", 150, 10, new Stats(7, 8, 9, 10), new AllStatusEffects()),
+            1 => new("Bat", 150, 5, new Stats(5, 6, 7, 8)),
+            2 => new("Wolf", 150, 7, new Stats(6, 7, 8, 9)),
+            3 => new("Wyvern", 150, 10, new Stats(7, 8, 9, 10)),
             _ => throw new ArgumentException("Invalid MonsterID")
         };
     }
@@ -508,6 +527,7 @@ namespace FirstDraft
             bool isPlayerAlive = true;
             int turnNumber = 1;
             bool cancel = false;
+
             // Commenting out to see if this is causing story not to log
             // It is! Do we need this at all?
             // GameLog.Clear();
@@ -523,18 +543,13 @@ namespace FirstDraft
                 $"{monster.Name}'s HP: {monster.CurrentHP}/{monster.MaxHP}\n";
 
                 Log(battleStartMessage);
+
                 while (isPlayerAlive && monster.CurrentHP > 0 && run == false)
                 {
-                    // Console.WriteLine("\n-------------------------");
-                    // Console.WriteLine("\nInside top of first [while] loop");
-                    // Console.WriteLine($"[cancel] = {cancel}\n");
-                    // Console.WriteLine("-------------------------\n");
-                    /* ~~~~ Player Attacks ~~~~ */
+                    /* ~~~~ Player's Turn ~~~~ */
                     while (cancel == false)
                     {
                         Log($"\n--- Turn {turnNumber} ---");
-                        // Console.WriteLine("Inside [Turn] loop");
-                        // Console.WriteLine($"[cancel] = {cancel}\n");
                         break;
                     }
 
@@ -572,7 +587,7 @@ namespace FirstDraft
                         case "M":
                             Log("");
                             Log("----------");
-                            for (var i = 0; i < player.KnownSpells.Count; i++)
+                            for (int i = 0; i < player.KnownSpells.Count; i++)
                             {
                                 Log($"({i + 1}) {player.KnownSpells[i].Name}");
                             }
@@ -609,15 +624,25 @@ namespace FirstDraft
                             continue;
                     }
 
-                    /* ~~~~ Monster Attacks ~~~~ */
+                    /* ~~~~ Monster's Turn ~~~~ */
                     if (monster.CurrentHP > 0)
                     {
+                        // if (player.StatusEffects.ExtraTurnsPending > 0)
+                        if (player.StatusEffects.HasteRoundsRemaining > 0)
+                        {
+                            player.StatusEffects.HasteRoundsRemaining--;
+                            player.StatusEffects.ExtraTurnsPending++;
+                            Game.Log($"[Haste] {player.Name} acts again! ({player.StatusEffects.ExtraTurnsPending} left)");
+                            // Skip [Monster] and give [Player] another full turn
+                            continue;
+                        }
                         isPlayerAlive = ResolveEnemyTurn(player, monster, processedBattleChoice, rng);
                     }
 
                     turnNumber++;
                 }
             }
+
             return isPlayerAlive;
         }
     }
@@ -627,13 +652,11 @@ namespace FirstDraft
     {
         static void Main(string[] args)
         {
-            // Console.WriteLine("\nWelcome to Void.");
             Game.Log("\nWelcome to Void.");
 
             // Stats playerStats = new(29, 52, 35, 25);
-            Stats playerStats = new(100, 52, 100, 25);
-            AllStatusEffects statusEffects = new();
-            Player player = new("Freya", playerStats, statusEffects);
+            Stats playerStats = new(999999, 52, 100, 25);
+            Player player = new("Freya", playerStats);
             Monster bat = MonsterFactory.CreateMonster(1);
             Monster wolf = MonsterFactory.CreateMonster(2);
             Monster wyvern = MonsterFactory.CreateMonster(3);
@@ -668,12 +691,11 @@ namespace FirstDraft
 
             */
 
-            // Game.Battle(bat, bat);
+            // Game.Battle(player, bat);
             // Game.Battle(player, wolf);
             // Game.Battle(player, wyvern);
             // Game.ShowGameLog();
 
-            /*
             var storyNodes = StoryLoader.LoadStoryFromJson("Story/story.json");
             var current = storyNodes["start"];
             bool isPlayerAlive = true;
@@ -737,7 +759,6 @@ namespace FirstDraft
             string logName = Game.GenerateLogFilename("CYOA");
             Game.SaveGameLog(logName);
 
-            */
 
         }
     }
