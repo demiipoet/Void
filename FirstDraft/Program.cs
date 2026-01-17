@@ -632,7 +632,8 @@ namespace FirstDraft
                         {
                             player.StatusEffects.HasteRoundsRemaining--;
                             player.StatusEffects.ExtraTurnsPending++;
-                            Game.Log($"[Haste] {player.Name} acts again! ({player.StatusEffects.ExtraTurnsPending} left)");
+                            // Changed [ExtraTurnsPending] to [HasteRoundsRemaining] because the former was printing the remaining turns incrementing instead of decrementing
+                            Game.Log($"[Haste] {player.Name} acts again! ({player.StatusEffects.HasteRoundsRemaining} left)");
                             // Skip [Monster] and give [Player] another full turn
                             continue;
                         }
