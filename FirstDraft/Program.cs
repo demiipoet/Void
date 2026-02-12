@@ -632,9 +632,9 @@ namespace FirstDraft
                         {
                             player.StatusEffects.HasteRoundsRemaining--;
                             player.StatusEffects.ExtraTurnsPending++;
-                            // Changed [ExtraTurnsPending] to [HasteRoundsRemaining] because the former was printing the remaining turns incrementing instead of decrementing
-                            Game.Log($"[Haste] {player.Name} acts again! ({player.StatusEffects.HasteRoundsRemaining} left)");
+                            Game.Log($"[Haste] {player.Name} acts again! ({player.StatusEffects.HasteRoundsRemaining + 1} left)");
                             // Skip [Monster] and give [Player] another full turn
+                            turnNumber++;
                             continue;
                         }
                         isPlayerAlive = ResolveEnemyTurn(player, monster, processedBattleChoice, rng);
